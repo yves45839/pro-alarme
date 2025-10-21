@@ -2,22 +2,65 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
+import type { SVGProps } from "react";
+
+type IconProps = SVGProps<SVGSVGElement>;
+
+const LightningIcon = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <path
+      d="m13 2-7 12h6l-1 8 7-12h-6z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const ShieldIcon = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <path
+      d="M12 21c6-2 8-5.667 8-12V5l-8-3-8 3v4c0 6.333 2 10 8 12Z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="m9 12 2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const HeadsetIcon = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <path
+      d="M4 12a8 8 0 0 1 16 0v6a2 2 0 0 1-2 2h-2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M4 12v6a2 2 0 0 0 2 2h2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M10 18h4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
 
 const advantages = [
   {
     title: "Réponse ultra-rapide",
     description:
       "Prise en charge de chaque incident en moins de 60 secondes par nos opérateurs certifiés.",
+    icon: LightningIcon,
   },
   {
     title: "Maintenance & SAV offerts",
     description:
       "Notre équipe dédiée assure gratuitement l’entretien du système et la mise à jour des équipements.",
+    icon: ShieldIcon,
   },
   {
     title: "Intervention express",
     description:
       "Agents mobiles déployés partout à Abidjan en moins de 15 minutes, 7j/7 et 24h/24.",
+    icon: HeadsetIcon,
   },
 ];
 
@@ -206,12 +249,13 @@ export default function Home() {
               <div className="relative w-full max-w-md">
                 <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
                   <Image
-                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80"
-                    alt="Agent de sécurité souriant surveillant un tableau de contrôle"
-                    width={1200}
-                    height={1500}
+                    src="/agent-securite.png"
+                    alt="Agent de sécurité Pro Alarme supervisant un centre de contrôle"
+                    width={900}
+                    height={1200}
                     className="h-full w-full object-cover"
                     priority
+                    sizes="(min-width: 768px) 420px, 100vw"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10" />
                   <div className="absolute bottom-6 left-6 right-6 text-sm text-white">
@@ -300,30 +344,33 @@ export default function Home() {
             <div className="grid flex-1 gap-6 md:grid-cols-2">
               <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                 <Image
-                  src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
-                  alt="Technicienne de sécurité panafricaine installant un détecteur"
-                  width={900}
+                  src="/Technicien.png"
+                  alt="Technicienne Pro Alarme installant un détecteur sur site"
+                  width={1000}
                   height={1200}
                   className="h-full w-full object-cover"
+                  sizes="(min-width: 768px) 320px, 100vw"
                 />
               </div>
               <div className="grid gap-6">
                 <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                   <Image
-                    src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80"
-                    alt="Cheffes d’entreprise ivoiriennes échangeant autour d’un plan de sécurité"
+                    src="/telesurveillance.png"
+                    alt="Opérateur de télésurveillance surveillant les alertes en temps réel"
                     width={900}
                     height={900}
                     className="h-full w-full object-cover"
+                    sizes="(min-width: 768px) 320px, 100vw"
                   />
                 </div>
                 <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                   <Image
-                    src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80"
-                    alt="Opérateur de télésurveillance africain vérifiant les journaux d’alertes"
+                    src="/agent-securite.png"
+                    alt="Agent de sécurité Pro Alarme échangeant avec une cliente"
                     width={900}
                     height={900}
                     className="h-full w-full object-cover"
+                    sizes="(min-width: 768px) 320px, 100vw"
                   />
                 </div>
               </div>
@@ -333,15 +380,21 @@ export default function Home() {
 
         <section className="bg-black py-20 text-white">
           <div className="mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-3">
-            {advantages.map((advantage) => (
-              <div
-                key={advantage.title}
-                className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
-              >
-                <h3 className="text-xl font-semibold text-white">{advantage.title}</h3>
-                <p className="mt-3 text-sm text-neutral-200">{advantage.description}</p>
-              </div>
-            ))}
+            {advantages.map((advantage) => {
+              const Icon = advantage.icon;
+              return (
+                <div
+                  key={advantage.title}
+                  className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-300">
+                    <Icon className="h-6 w-6" />
+                  </span>
+                  <h3 className="text-xl font-semibold text-white">{advantage.title}</h3>
+                  <p className="mt-3 text-sm text-neutral-200">{advantage.description}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
