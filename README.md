@@ -20,6 +20,15 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Crédits images
+
+Les visuels affichés sur la page d’accueil proviennent de [Unsplash](https://unsplash.com) et sont couverts par la [licence Unsplash](https://unsplash.com/license) :
+
+- Agent de sécurité : https://unsplash.com/photos/00dcc994a43e
+- Technicienne installant un détecteur : https://unsplash.com/photos/b1c1722653e1
+- Cheffes d’entreprise en réunion : https://unsplash.com/photos/6864f9cf17ab
+- Opérateur de télésurveillance : https://unsplash.com/photos/ee0c2909d518
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
