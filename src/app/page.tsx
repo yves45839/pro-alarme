@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 
 const advantages = [
@@ -202,21 +203,42 @@ export default function Home() {
             <div className="relative flex h-full justify-center">
               <div className="absolute -left-8 top-8 hidden h-32 w-32 rounded-full border border-red-500/40 md:block" />
               <div className="absolute -right-10 bottom-6 hidden h-24 w-24 rounded-full border border-red-500/30 md:block" />
-              <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
-                <div className="flex items-center justify-between text-xs text-white/70">
-                  <span>Réponse 24/7</span>
-                  <span>Centre de télésurveillance</span>
-                </div>
-                <div className="mt-8 space-y-5">
-                  <div className="rounded-2xl bg-black/60 px-6 py-5">
-                    <p className="text-sm uppercase tracking-[0.3em] text-red-300">Incidents</p>
-                    <p className="mt-3 text-3xl font-semibold text-white">&lt; 60 s</p>
-                    <p className="mt-1 text-sm text-neutral-300">Temps moyen de prise en charge</p>
+              <div className="relative w-full max-w-md">
+                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+                  <Image
+                    src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80"
+                    alt="Agent de sécurité souriant surveillant un tableau de contrôle"
+                    width={1200}
+                    height={1500}
+                    className="h-full w-full object-cover"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10" />
+                  <div className="absolute bottom-6 left-6 right-6 text-sm text-white">
+                    <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.3em] text-red-200">
+                      Vigile certifié
+                    </span>
+                    <p className="mt-3 text-base leading-relaxed text-neutral-100">
+                      Des professionnels formés localement assurent un suivi constant de vos alarmes critiques.
+                    </p>
                   </div>
-                  <div className="rounded-2xl bg-black/60 px-6 py-5">
-                    <p className="text-sm uppercase tracking-[0.3em] text-red-300">Interventions</p>
-                    <p className="mt-3 text-3xl font-semibold text-white">&lt; 15 min</p>
-                    <p className="mt-1 text-sm text-neutral-300">Déploiement d’agents partout à Abidjan</p>
+                </div>
+                <div className="relative -mt-10 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+                  <div className="flex items-center justify-between text-xs text-white/70">
+                    <span>Réponse 24/7</span>
+                    <span>Centre de télésurveillance</span>
+                  </div>
+                  <div className="mt-8 space-y-5">
+                    <div className="rounded-2xl bg-black/60 px-6 py-5">
+                      <p className="text-sm uppercase tracking-[0.3em] text-red-300">Incidents</p>
+                      <p className="mt-3 text-3xl font-semibold text-white">&lt; 60 s</p>
+                      <p className="mt-1 text-sm text-neutral-300">Temps moyen de prise en charge</p>
+                    </div>
+                    <div className="rounded-2xl bg-black/60 px-6 py-5">
+                      <p className="text-sm uppercase tracking-[0.3em] text-red-300">Interventions</p>
+                      <p className="mt-3 text-3xl font-semibold text-white">&lt; 15 min</p>
+                      <p className="mt-1 text-sm text-neutral-300">Déploiement d’agents partout à Abidjan</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -246,6 +268,65 @@ export default function Home() {
                   <p className="text-base text-neutral-800">{item}</p>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-neutral-50 py-20">
+          <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 lg:flex-row">
+            <div className="space-y-6 lg:w-1/2">
+              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Notre équipe</span>
+              <h2 className="text-3xl font-semibold text-black md:text-4xl">
+                Des expertes et experts proches de vos réalités terrain.
+              </h2>
+              <p className="text-lg text-neutral-700">
+                Agents de sécurité, techniciennes et superviseurs basés à Abidjan suivent votre installation et vous accompagnent à chaque étape, de l’audit initial aux interventions urgentes.
+              </p>
+              <ul className="space-y-3 text-sm text-neutral-700">
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
+                  Recrutement local rigoureux et formations continues certifiées.
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
+                  Techniciennes dédiées pour optimiser vos dispositifs électroniques.
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
+                  Supervision 24/7 et reporting détaillé après chaque intervention.
+                </li>
+              </ul>
+            </div>
+            <div className="grid flex-1 gap-6 md:grid-cols-2">
+              <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+                <Image
+                  src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
+                  alt="Technicienne de sécurité panafricaine installant un détecteur"
+                  width={900}
+                  height={1200}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="grid gap-6">
+                <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+                  <Image
+                    src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80"
+                    alt="Cheffes d’entreprise ivoiriennes échangeant autour d’un plan de sécurité"
+                    width={900}
+                    height={900}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+                  <Image
+                    src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80"
+                    alt="Opérateur de télésurveillance africain vérifiant les journaux d’alertes"
+                    width={900}
+                    height={900}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </section>
