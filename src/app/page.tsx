@@ -46,13 +46,35 @@ const pricingHighlights = [
   "À partir de 2 sites : 5 % de remise supplémentaire par site",
 ];
 
-const stepQuestions = [
+type StepValues = {
+  siteType?: string;
+  siteCount?: string;
+  location?: string;
+  phone?: string;
+  email?: string;
+  notes?: string;
+};
+
+type StepField = keyof StepValues;
+
+type InputType = "select" | "number" | "text" | "tel" | "email" | "textarea";
+
+type StepQuestion = {
+  id: number;
+  title: string;
+  subtitle: string;
+  field: StepField;
+  inputType: InputType;
+  options?: string[];
+};
+
+const stepQuestions: StepQuestion[] = [
   {
     id: 1,
     title: "Quel type de site souhaitez-vous protéger ?",
     subtitle: "Choisissez la configuration principale pour adapter la solution.",
     field: "siteType",
-    inputType: "select" as const,
+    inputType: "select",
     options: [
       "Résidence principale",
       "Entreprise / Bureau",
@@ -66,48 +88,37 @@ const stepQuestions = [
     title: "Combien de sites sont à sécuriser ?",
     subtitle: "Nos offres multi-sites déclenchent automatiquement les remises adaptées.",
     field: "siteCount",
-    inputType: "number" as const,
+    inputType: "number",
   },
   {
     id: 3,
     title: "Où se situe votre site principal ?",
     subtitle: "Nous intervenons partout à Abidjan en moins de 15 minutes.",
     field: "location",
-    inputType: "text" as const,
+    inputType: "text",
   },
   {
     id: 4,
     title: "Quel est votre numéro de téléphone ?",
     subtitle: "Nous privilégions l’appel pour valider l’audit de sécurité.",
     field: "phone",
-    inputType: "tel" as const,
+    inputType: "tel",
   },
   {
     id: 5,
     title: "Quelle adresse e-mail devons-nous utiliser pour vos factures ?",
     subtitle: "Recevez également nos offres promotionnelles dédiées aux clients Pro Alarme.",
     field: "email",
-    inputType: "email" as const,
+    inputType: "email",
   },
   {
     id: 6,
     title: "Souhaitez-vous ajouter un commentaire ?",
     subtitle: "Précisez vos besoins particuliers (zones sensibles, horaires, etc.).",
     field: "notes",
-    inputType: "textarea" as const,
+    inputType: "textarea",
   },
 ];
-
-type StepValues = {
-  siteType?: string;
-  siteCount?: string;
-  location?: string;
-  phone?: string;
-  email?: string;
-  notes?: string;
-};
-
-type StepQuestion = (typeof stepQuestions)[number];
 
 export default function Home() {
   const [currentStep, setCurrentStep] = useState(0);
