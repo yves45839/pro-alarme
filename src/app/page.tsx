@@ -4,6 +4,10 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import type { SVGProps } from "react";
 
+import agentSecurityImage from "@public/agent-securite.png";
+import technicianImage from "@public/Technicien.png";
+import telesurveillanceImage from "@public/telesurveillance.png";
+
 type IconProps = SVGProps<SVGSVGElement>;
 
 const LightningIcon = (props: IconProps) => (
@@ -249,7 +253,7 @@ export default function Home() {
               <div className="relative w-full max-w-md">
                 <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
                   <Image
-                    src="/agent-securite.png"
+                    src={agentSecurityImage}
                     alt="Agent de sécurité Pro Alarme supervisant un centre de contrôle"
                     width={900}
                     height={1200}
@@ -344,7 +348,7 @@ export default function Home() {
             <div className="grid flex-1 gap-6 md:grid-cols-2">
               <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                 <Image
-                  src="/Technicien.png"
+                  src={technicianImage}
                   alt="Technicienne Pro Alarme installant un détecteur sur site"
                   width={1000}
                   height={1200}
@@ -355,7 +359,7 @@ export default function Home() {
               <div className="grid gap-6">
                 <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                   <Image
-                    src="/telesurveillance.png"
+                    src={telesurveillanceImage}
                     alt="Opérateur de télésurveillance surveillant les alertes en temps réel"
                     width={900}
                     height={900}
@@ -365,7 +369,7 @@ export default function Home() {
                 </div>
                 <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                   <Image
-                    src="/agent-securite.png"
+                    src={agentSecurityImage}
                     alt="Agent de sécurité Pro Alarme échangeant avec une cliente"
                     width={900}
                     height={900}
