@@ -441,140 +441,11 @@ export default function Home() {
         </div>
       </header>
 
-        <section className="mx-auto max-w-6xl px-6 py-20">
-          <div className="grid gap-10 md:grid-cols-2 md:items-center">
-            <div className="space-y-6">
-              <h2 className="text-3xl font-semibold text-black md:text-4xl">
-                Une offre unique, calibrée pour Vous!
-              </h2>
-              <p className="text-lg text-neutral-700">
-                Notre kit intègre des détecteurs intelligents, 1 sirène et 1 télécommande d’armement. Nous supervisons vos sites 24/7 et déclenchons immédiatement les protocoles en cas d’alerte.
-              </p>
-            </div>
-            <div className="grid gap-4">
-              {pricingHighlights.map((item) => (
-                <div
-                  key={item}
-                  className="flex items-start gap-4 rounded-2xl border border-neutral-200 bg-neutral-50/80 px-6 py-5 shadow-sm"
-                >
-                  <span className="mt-1 h-3 w-3 rounded-full bg-red-500" />
-                  <p className="text-base text-neutral-800">{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-black py-20 text-white">
-          <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 lg:flex-row">
-            <div className="lg:w-2/5">
-              <span className="text-xs uppercase tracking-[0.3em] text-red-300">Tout est compris</span>
-              <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
-                Un accompagnement complet pour sécuriser sans surprise vos opérations.
-              </h2>
-              <p className="mt-4 text-sm text-neutral-200">
-                Chaque abonnement inclut les prestations nécessaires pour rester opérationnel 24/7 et pas de coûts cachés.
-              </p>
-            </div>
-            <ul className="flex-1 space-y-4">
-              {includedFeatures.map((feature) => (
-                <li
-                  key={feature}
-                  className="rounded-3xl border border-white/10 bg-white/5 px-6 py-5 text-sm leading-relaxed text-neutral-100"
-                >
-                  <span className="mr-3 inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-500/20 text-xs font-semibold text-red-200">
-                    ✓
-                  </span>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <section className="bg-neutral-50 py-20">
-          <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 lg:flex-row">
-            <div className="space-y-6 lg:w-1/2">
-              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Notre équipe</span>
-              <h2 className="text-3xl font-semibold text-black md:text-4xl">
-                Des expertes et experts proches de vos réalités terrain.
-              </h2>
-              <p className="text-lg text-neutral-700">
-                Agents de sécurité, techniciennes et superviseurs suivent votre installation et vous accompagnent à chaque étape, de l’audit initial aux interventions urgentes.
-              </p>
-              <ul className="space-y-3 text-sm text-neutral-700">
-                <li className="flex items-start gap-3">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
-                  Recrutement rigoureux et formations continues des équipes.
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
-                  Technicien(ne)s qualifiié(e)s pour vos dispositifs.
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
-                  Supervision 24/7 et reporting après chaque intervention.
-                </li>
-              </ul>
-            </div>
-            <div className="grid flex-1 gap-6 md:grid-cols-2">
-              <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
-                <Image
-                  src={technicianImageSrc}
-                  alt="Technicienne Pro Alarme installant un système sur site"
-                  width={1000}
-                  height={1200}
-                  className="h-full w-full object-cover"
-                  sizes="(min-width: 768px) 320px, 100vw"
-                />
-              </div>
-              <div className="grid gap-6">
-                <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
-                  <Image
-                    src={telesurveillanceImageSrc}
-                    alt="Opérateur de télésurveillance surveillant les alertes en temps réel"
-                    width={900}
-                    height={900}
-                    className="h-full w-full object-cover"
-                    sizes="(min-width: 768px) 320px, 100vw"
-                  />
-                </div>
-                <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
-                  <Image
-                    src={agentSecurityImageSrc}
-                    alt="Agent de sécurité Pro Alarme échangeant avec une cliente"
-                    width={900}
-                    height={900}
-                    className="h-full w-full object-cover"
-                    sizes="(min-width: 768px) 320px, 100vw"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-black py-20 text-white">
-          <div className="mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-3">
-            {advantages.map((advantage) => {
-              const Icon = advantage.icon;
-              return (
-                <div
-                  key={advantage.title}
-                  className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
-                >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-300">
-                    <Icon className="h-6 w-6" />
-                  </span>
-                  <h3 className="text-xl font-semibold text-white">{advantage.title}</h3>
-                  <p className="mt-3 text-sm text-neutral-200">{advantage.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        <section id="devis" className="relative overflow-hidden bg-neutral-100 py-20 scroll-mt-24">
+      <main>
+        <section
+          id="devis"
+          className="relative overflow-hidden bg-neutral-100 py-20 scroll-mt-24"
+        >
           <div className="absolute -top-16 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-red-500/10 blur-3xl" />
           <div className="relative mx-auto flex max-w-6xl flex-col gap-12 px-6 md:flex-row">
             <div className="md:w-1/2">
@@ -813,6 +684,139 @@ export default function Home() {
                 )}
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6 py-20">
+          <div className="grid gap-10 md:grid-cols-2 md:items-center">
+            <div className="space-y-6">
+              <h2 className="text-3xl font-semibold text-black md:text-4xl">
+                Une offre unique, calibrée pour Vous!
+              </h2>
+              <p className="text-lg text-neutral-700">
+                Notre kit intègre des détecteurs intelligents, 1 sirène et 1 télécommande d’armement. Nous supervisons vos sites 24/7 et déclenchons immédiatement les protocoles en cas d’alerte.
+              </p>
+            </div>
+            <div className="grid gap-4">
+              {pricingHighlights.map((item) => (
+                <div
+                  key={item}
+                  className="flex items-start gap-4 rounded-2xl border border-neutral-200 bg-neutral-50/80 px-6 py-5 shadow-sm"
+                >
+                  <span className="mt-1 h-3 w-3 rounded-full bg-red-500" />
+                  <p className="text-base text-neutral-800">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-black py-20 text-white">
+          <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 lg:flex-row">
+            <div className="lg:w-2/5">
+              <span className="text-xs uppercase tracking-[0.3em] text-red-300">Tout est compris</span>
+              <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
+                Un accompagnement complet pour sécuriser sans surprise vos opérations.
+              </h2>
+              <p className="mt-4 text-sm text-neutral-200">
+                Chaque abonnement inclut les prestations nécessaires pour rester opérationnel 24/7 et pas de coûts cachés.
+              </p>
+            </div>
+            <ul className="flex-1 space-y-4">
+              {includedFeatures.map((feature) => (
+                <li
+                  key={feature}
+                  className="rounded-3xl border border-white/10 bg-white/5 px-6 py-5 text-sm leading-relaxed text-neutral-100"
+                >
+                  <span className="mr-3 inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-500/20 text-xs font-semibold text-red-200">
+                    ✓
+                  </span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="bg-neutral-50 py-20">
+          <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 lg:flex-row">
+            <div className="space-y-6 lg:w-1/2">
+              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Notre équipe</span>
+              <h2 className="text-3xl font-semibold text-black md:text-4xl">
+                Des expertes et experts proches de vos réalités terrain.
+              </h2>
+              <p className="text-lg text-neutral-700">
+                Agents de sécurité, techniciennes et superviseurs suivent votre installation et vous accompagnent à chaque étape, de l’audit initial aux interventions urgentes.
+              </p>
+              <ul className="space-y-3 text-sm text-neutral-700">
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
+                  Recrutement rigoureux et formations continues des équipes.
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
+                  Technicien(ne)s qualifiié(e)s pour vos dispositifs.
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
+                  Supervision 24/7 et reporting après chaque intervention.
+                </li>
+              </ul>
+            </div>
+            <div className="grid flex-1 gap-6 md:grid-cols-2">
+              <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+                <Image
+                  src={technicianImageSrc}
+                  alt="Technicienne Pro Alarme installant un système sur site"
+                  width={1000}
+                  height={1200}
+                  className="h-full w-full object-cover"
+                  sizes="(min-width: 768px) 320px, 100vw"
+                />
+              </div>
+              <div className="grid gap-6">
+                <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+                  <Image
+                    src={telesurveillanceImageSrc}
+                    alt="Opérateur de télésurveillance surveillant les alertes en temps réel"
+                    width={900}
+                    height={900}
+                    className="h-full w-full object-cover"
+                    sizes="(min-width: 768px) 320px, 100vw"
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+                  <Image
+                    src={agentSecurityImageSrc}
+                    alt="Agent de sécurité Pro Alarme échangeant avec une cliente"
+                    width={900}
+                    height={900}
+                    className="h-full w-full object-cover"
+                    sizes="(min-width: 768px) 320px, 100vw"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-black py-20 text-white">
+          <div className="mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-3">
+            {advantages.map((advantage) => {
+              const Icon = advantage.icon;
+              return (
+                <div
+                  key={advantage.title}
+                  className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
+                >
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-300">
+                    <Icon className="h-6 w-6" />
+                  </span>
+                  <h3 className="text-xl font-semibold text-white">{advantage.title}</h3>
+                  <p className="mt-3 text-sm text-neutral-200">{advantage.description}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
