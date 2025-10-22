@@ -4,9 +4,9 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import type { SVGProps } from "react";
 
-const agentSecurityImage = "/images/agent-securite.png" as const;
-const technicianImage = "/images/Technicien.png" as const;
-const telesurveillanceImage = "/images/telesurveillance.png" as const;
+import agentSecurityImage from "@public/images/agent-securite.png";
+import technicianImage from "@public/images/Technicien.png";
+import telesurveillanceImage from "@public/images/telesurveillance.png";
 
 type IconProps = SVGProps<SVGSVGElement>;
 
