@@ -96,6 +96,58 @@ const pricingHighlights = [
   "À partir de 2 sites : 5 % de remise supplémentaire par site",
 ];
 
+const trustMetrics = [
+  {
+    value: "4 500+",
+    label: "interventions gérées chaque année",
+    description:
+      "Des équipes locales rompus aux procédures d’urgence, capables d’intervenir immédiatement sur le terrain.",
+  },
+  {
+    value: "98 %",
+    label: "de clients renouvellent leur abonnement",
+    description:
+      "La fiabilité du matériel et le suivi proactif rassurent les directions sécurité les plus exigeantes.",
+  },
+  {
+    value: "15 min",
+    label: "maximum avant arrivée sur site",
+    description:
+      "Nos patrouilles sont positionnées stratégiquement à Abidjan pour réduire au minimum votre fenêtre de risque.",
+  },
+];
+
+const includedFeatures = [
+  "Installation complète par des techniciennes certifiées et audit de vulnérabilité sur site.",
+  "Télésurveillance 24/7 avec levée de doute audio/vidéo et rapport d’intervention systématique.",
+  "Maintenance préventive et remplacement des équipements défaillants inclus sans frais additionnels.",
+  "Tableau de bord client pour suivre l’état des détecteurs, les historiques d’alertes et les interventions.",
+];
+
+const testimonials = [
+  {
+    quote:
+      "Depuis l’installation, nous avons éliminé les intrusions nocturnes. Les rapports reçus après chaque alerte facilitent nos décisions de sûreté.",
+    author: "Fatou K., Directrice d’entrepôt logistique",
+  },
+  {
+    quote:
+      "Les opérateurs Pro Alarme rappellent en moins d’une minute. Leur rigueur rassure nos équipes même en horaires décalés.",
+    author: "Jean-Marc A., Responsable d’agence bancaire",
+  },
+  {
+    quote:
+      "Nous avons regroupé quatre sites et réduit nos coûts de sécurité de 18 % tout en améliorant la réactivité.",
+    author: "Mariam S., Gérante de réseau de boutiques",
+  },
+];
+
+const guarantees = [
+  "Audit et plan d’implantation offerts pour tout nouveau site.",
+  "Résiliation possible à tout moment avec préavis de 30 jours.",
+  "Accompagnement dédié : un interlocuteur unique suit votre dossier.",
+];
+
 type StepValues = {
   siteType?: string;
   siteCount?: string;
@@ -299,6 +351,26 @@ export default function Home() {
               <p className="max-w-xl text-lg text-neutral-200">
                 Surveillez vos sites sensibles, rassurez vos équipes et réduisez drastiquement les risques. Pro Alarme combine technologie de pointe, supervision 24/7 et interventions express.
               </p>
+              <ul className="space-y-3 text-sm text-neutral-200">
+                <li className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-xs font-semibold text-white">
+                    1
+                  </span>
+                  Audit gratuit et plan de sécurisation personnalisé pour chaque site.
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-xs font-semibold text-white">
+                    2
+                  </span>
+                  Télésurveillance opérée localement avec réponse en moins de 60&nbsp;secondes.
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-xs font-semibold text-white">
+                    3
+                  </span>
+                  Maintenance et interventions incluses pour garantir la continuité de service.
+                </li>
+              </ul>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <button
                   type="button"
@@ -370,6 +442,21 @@ export default function Home() {
       </header>
 
       <main className="bg-white text-black">
+        <section className="border-b border-neutral-200 bg-neutral-50 py-16">
+          <div className="mx-auto grid max-w-6xl gap-8 px-6 sm:grid-cols-3">
+            {trustMetrics.map((metric) => (
+              <div
+                key={metric.label}
+                className="flex flex-col gap-3 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm"
+              >
+                <span className="text-3xl font-semibold text-red-500">{metric.value}</span>
+                <h3 className="text-base font-semibold text-black">{metric.label}</h3>
+                <p className="text-sm text-neutral-600">{metric.description}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="mx-auto max-w-6xl px-6 py-20">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div className="space-y-6">
@@ -391,6 +478,33 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="bg-black py-20 text-white">
+          <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 lg:flex-row">
+            <div className="lg:w-2/5">
+              <span className="text-xs uppercase tracking-[0.3em] text-red-300">Tout est compris</span>
+              <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
+                Un accompagnement complet pour sécuriser sans surprise vos opérations.
+              </h2>
+              <p className="mt-4 text-sm text-neutral-200">
+                Chaque abonnement inclut les prestations nécessaires pour rester opérationnel 24/7 et éviter les coûts cachés.
+              </p>
+            </div>
+            <ul className="flex-1 space-y-4">
+              {includedFeatures.map((feature) => (
+                <li
+                  key={feature}
+                  className="rounded-3xl border border-white/10 bg-white/5 px-6 py-5 text-sm leading-relaxed text-neutral-100"
+                >
+                  <span className="mr-3 inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-500/20 text-xs font-semibold text-red-200">
+                    ✓
+                  </span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
@@ -718,6 +832,33 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="bg-neutral-50 py-20">
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Ils nous font confiance</span>
+              <h2 className="mt-4 text-3xl font-semibold text-black md:text-4xl">
+                La preuve par l’expérience de nos clientes et clients.
+              </h2>
+              <p className="mt-4 text-sm text-neutral-600">
+                Les directions sûreté, retail et finance qui collaborent avec Pro Alarme soulignent la réduction immédiate des incidents et la sérénité retrouvée de leurs équipes.
+              </p>
+            </div>
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              {testimonials.map((testimonial) => (
+                <blockquote
+                  key={testimonial.author}
+                  className="flex h-full flex-col justify-between rounded-3xl border border-neutral-200 bg-white p-6 text-left shadow-sm"
+                >
+                  <p className="text-sm leading-relaxed text-neutral-700">“{testimonial.quote}”</p>
+                  <cite className="mt-6 block text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
+                    {testimonial.author}
+                  </cite>
+                </blockquote>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className="bg-white py-20">
           <div className="mx-auto max-w-5xl space-y-8 px-6">
             <h2 className="text-center text-3xl font-semibold text-black">
@@ -737,6 +878,43 @@ export default function Home() {
                 </details>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="bg-black py-20 text-white">
+          <div className="mx-auto flex max-w-5xl flex-col items-center gap-10 px-6 text-center">
+            <div className="max-w-3xl space-y-4">
+              <span className="text-xs uppercase tracking-[0.3em] text-red-300">Passer à l’action</span>
+              <h2 className="text-3xl font-semibold md:text-4xl">
+                Réservez votre audit gratuit et sécurisez vos sites dès cette semaine.
+              </h2>
+              <p className="text-sm text-neutral-200">
+                Un conseiller dédié coordonne la visite technique, valide votre plan de sécurisation et active la télésurveillance sans coupure d’activité.
+              </p>
+            </div>
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <button
+                type="button"
+                onClick={handleActivateForm}
+                className="rounded-full bg-red-500 px-10 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400"
+              >
+                Demander mon devis rapide
+              </button>
+              <a
+                href="tel:+2250710701212"
+                className="rounded-full border border-white/20 px-10 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white"
+              >
+                Parler à une experte maintenant
+              </a>
+            </div>
+            <ul className="grid gap-3 text-left text-xs text-neutral-300 sm:grid-cols-3">
+              {guarantees.map((guarantee) => (
+                <li key={guarantee} className="flex items-start gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                  <span className="mt-0.5 text-red-300">•</span>
+                  <span>{guarantee}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       </main>
