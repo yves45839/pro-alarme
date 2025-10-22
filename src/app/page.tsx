@@ -275,9 +275,9 @@ export default function Home() {
               <Image
                 src={logoProalarmeSrc}
                 alt="Logo Pro Alarme"
-                width={120}
-                height={36}
-                className="h-9 w-auto md:h-10"
+                width={180}
+                height={54}
+                className="h-12 w-auto md:h-14"
                 priority
               />
             </Link>
@@ -314,7 +314,7 @@ export default function Home() {
                   </span>
                 </button>
                 <a
-                  href="tel:+2250102030405"
+                  href="tel:+2250710701212"
                   className="rounded-full border border-white/20 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white"
                 >
                   Nous appeler maintenant
@@ -750,8 +750,8 @@ export default function Home() {
             </p>
           </div>
           <div className="flex flex-col items-start gap-2 text-sm text-neutral-400 md:items-end">
-            <a href="tel:+2250102030405" className="hover:text-white">
-              +225 01 02 03 04 05
+            <a href="tel:+2250710701212" className="hover:text-white">
+              +225 07 10 70 12 12
             </a>
             <a href="mailto:contact@proalarme.ci" className="hover:text-white">
               contact@proalarme.ci
