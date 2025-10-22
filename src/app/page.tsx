@@ -5,10 +5,10 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { SVGProps } from "react";
 
-import agentSecurityImage from "@public/images/agent-securite.png";
-import logoProalarme from "@public/images/logo_proalarme.png";
-import technicianImage from "@public/images/technicien.png";
-import telesurveillanceImage from "@public/images/telesurveillance.png";
+const logoProalarmeSrc = "/images/logo_proalarme.png" as const;
+const agentSecurityImageSrc = "/images/agent-securite.png" as const;
+const technicianImageSrc = "/images/technicien.png" as const;
+const telesurveillanceImageSrc = "/images/telesurveillance.png" as const;
 
 type IconProps = SVGProps<SVGSVGElement>;
 
@@ -240,7 +240,7 @@ export default function Home() {
           <nav className="flex items-center justify-between text-sm uppercase tracking-[0.3em] text-red-200">
             <Link href="/" className="flex items-center" aria-label="Accueil Pro Alarme">
               <Image
-                src={logoProalarme}
+                src={logoProalarmeSrc}
                 alt="Logo Pro Alarme"
                 width={160}
                 height={48}
@@ -290,7 +290,7 @@ export default function Home() {
               <div className="relative w-full max-w-md">
                 <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
                   <Image
-                    src={agentSecurityImage}
+                    src={agentSecurityImageSrc}
                     alt="Agent de sécurité Pro Alarme supervisant un centre de contrôle"
                     width={900}
                     height={1200}
@@ -385,7 +385,7 @@ export default function Home() {
             <div className="grid flex-1 gap-6 md:grid-cols-2">
               <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                 <Image
-                  src={technicianImage}
+                  src={technicianImageSrc}
                   alt="Technicienne Pro Alarme installant un détecteur sur site"
                   width={1000}
                   height={1200}
@@ -396,7 +396,7 @@ export default function Home() {
               <div className="grid gap-6">
                 <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                   <Image
-                    src={telesurveillanceImage}
+                    src={telesurveillanceImageSrc}
                     alt="Opérateur de télésurveillance surveillant les alertes en temps réel"
                     width={900}
                     height={900}
@@ -406,7 +406,7 @@ export default function Home() {
                 </div>
                 <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                   <Image
-                    src={agentSecurityImage}
+                    src={agentSecurityImageSrc}
                     alt="Agent de sécurité Pro Alarme échangeant avec une cliente"
                     width={900}
                     height={900}
