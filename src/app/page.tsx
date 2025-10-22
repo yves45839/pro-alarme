@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { SVGProps } from "react";
 
 const logoProalarmeSrc = "/images/logo_proalarme.png" as const;
@@ -174,6 +174,9 @@ export default function Home() {
   const [currentStep, setCurrentStep] = useState(0);
   const [values, setValues] = useState<StepValues>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isFormActive, setIsFormActive] = useState(false);
+
+  const formCardRef = useRef<HTMLDivElement | null>(null);
 
   const activeQuestion: StepQuestion = useMemo(
     () => stepQuestions[Math.min(currentStep, stepQuestions.length - 1)],
@@ -216,10 +219,40 @@ export default function Home() {
     setValues((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleActivateForm = () => {
+    setIsFormActive(true);
+    setCurrentStep(0);
+    setValues({});
+    setIsSubmitted(false);
+
+    setTimeout(() => {
+      formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     handleNext();
   };
+
+  const handleOptionSelect = (option: string) => {
+    handleChange(activeQuestion.field, option);
+    setTimeout(() => {
+      setCurrentStep((prev) => Math.min(prev + 1, stepQuestions.length - 1));
+    }, 150);
+  };
+
+  useEffect(() => {
+    if (!isFormActive) {
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+
+    return () => window.clearTimeout(timeout);
+  }, [currentStep, isFormActive, isSubmitted]);
 
   const summary = useMemo(() => {
     return [
@@ -267,8 +300,9 @@ export default function Home() {
                 Surveillez vos sites sensibles, rassurez vos équipes et réduisez drastiquement les risques. Pro Alarme combine technologie de pointe, supervision 24/7 et interventions express.
               </p>
               <div className="flex flex-col gap-4 sm:flex-row">
-                <a
-                  href="#devis"
+                <button
+                  type="button"
+                  onClick={handleActivateForm}
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-red-500 via-red-400 to-red-500 px-10 py-4 text-center text-base font-semibold uppercase tracking-[0.25em] text-white shadow-[0_18px_45px_rgba(239,68,68,0.45)] transition hover:from-red-400 hover:via-red-500 hover:to-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <span className="absolute inset-0 translate-y-[120%] bg-white/20 transition duration-500 ease-out group-hover:translate-y-[-10%]" />
@@ -278,7 +312,7 @@ export default function Home() {
                       &gt;
                     </span>
                   </span>
-                </a>
+                </button>
                 <a
                   href="tel:+2250102030405"
                   className="rounded-full border border-white/20 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white"
@@ -490,7 +524,10 @@ export default function Home() {
               </div>
             </div>
             <div className="md:w-1/2">
-              <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-xl">
+              <div
+                ref={formCardRef}
+                className="rounded-3xl border border-black/10 bg-white p-8 shadow-xl"
+              >
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold text-black">Demandez votre abonnement</h3>
                   <span className="rounded-full bg-black px-4 py-1 text-xs uppercase tracking-[0.2em] text-white">
@@ -501,7 +538,20 @@ export default function Home() {
                   Répondez aux questions. Les champs apparaissent au fur et à mesure pour rester concentré sur l’essentiel.
                 </p>
 
-                {!isSubmitted ? (
+                {!isFormActive ? (
+                  <div className="mt-8 space-y-6 text-center">
+                    <p className="text-sm text-neutral-600">
+                      Cliquez sur « Demander un audit gratuit » pour lancer le questionnaire interactif.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleActivateForm}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-red-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400"
+                    >
+                      Lancer le flux de questions
+                    </button>
+                  </div>
+                ) : !isSubmitted ? (
                   <form onSubmit={handleSubmit} className="mt-8 space-y-6">
                     <div>
                       <div className="flex items-center justify-between">
@@ -511,45 +561,17 @@ export default function Home() {
                         <button
                           type="button"
                           onClick={handleBack}
-                          className="text-xs uppercase tracking-[0.2em] text-neutral-500 transition hover:text-black"
+                          className="text-xs uppercase tracking-[0.2em] text-neutral-500 transition hover:text-black disabled:opacity-40"
                           disabled={currentStep === 0}
                         >
-                          Retour
+                          Revenir
                         </button>
-                      </div>
-                      <div className="mt-4 flex flex-wrap items-center gap-2">
-                        {stepQuestions.map((question, index) => {
-                          const isActive = index === currentStep;
-                          const isCompleted = index < currentStep;
-                          return (
-                            <button
-                              key={question.id}
-                              type="button"
-                              onClick={() => {
-                                if (index <= currentStep) {
-                                  setCurrentStep(index);
-                                }
-                              }}
-                              className={`flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold uppercase tracking-[0.15em] transition ${
-                                isActive
-                                  ? "border-red-500 bg-red-500 text-white shadow-lg shadow-red-500/40"
-                                  : isCompleted
-                                    ? "border-red-500/60 bg-red-500/10 text-red-500"
-                                    : "border-neutral-200 bg-white text-neutral-400"
-                              }`}
-                              disabled={index > currentStep}
-                              aria-label={"Aller a l'etape " + (index + 1)}
-                            >
-                              <span>{index + 1}</span>
-                            </button>
-                          );
-                        })}
                       </div>
                       <div className="mt-4">
                         <div className="h-2 w-full rounded-full bg-neutral-200">
                           <div
                             className="h-2 rounded-full bg-red-500 transition-all duration-500 ease-out"
-                            style={{ width: progressPercentage + "%" }}
+                            style={{ width: `${progressPercentage}%` }}
                           />
                         </div>
                         <div className="mt-2 flex items-center justify-between text-[11px] uppercase tracking-[0.3em] text-neutral-400">
@@ -557,91 +579,85 @@ export default function Home() {
                           <span>{progressPercentage}%</span>
                         </div>
                       </div>
-                      <h4 className="mt-6 text-lg font-semibold text-black">{activeQuestion.title}</h4>
+                      <h3 className="mt-6 text-xl font-semibold text-black">{activeQuestion.title}</h3>
                       <p className="mt-2 text-sm text-neutral-600">{activeQuestion.subtitle}</p>
+                    </div>
 
-                      <div className="mt-6">
-                        {activeQuestion.inputType === "select" && (
-                          <select
-                            value={values[activeQuestion.field] ?? ""}
-                            onChange={(event) =>
-                              handleChange(activeQuestion.field, event.target.value)
-                            }
-                            required
-                            className="w-full rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          >
-                            <option value="">Sélectionnez une option</option>
-                            {activeQuestion.options?.map((option) => (
-                              <option key={option} value={option}>
+                    <div className="space-y-4">
+                      {activeQuestion.options ? (
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {activeQuestion.options.map((option) => {
+                            const isSelected = values[activeQuestion.field] === option;
+                            return (
+                              <button
+                                key={option}
+                                type="button"
+                                onClick={() => handleOptionSelect(option)}
+                                className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${
+                                  isSelected
+                                    ? "border-red-500 bg-red-50 text-red-600"
+                                    : "border-neutral-200 bg-white text-neutral-800 hover:border-red-400 hover:bg-red-50"
+                                }`}
+                              >
                                 {option}
-                              </option>
-                            ))}
-                          </select>
-                        )}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ) : null}
 
-                        {activeQuestion.inputType === "number" && (
-                          <input
-                            type="number"
-                            min={1}
-                            value={values[activeQuestion.field] ?? ""}
-                            onChange={(event) =>
-                              handleChange(activeQuestion.field, event.target.value)
-                            }
-                            required
-                            className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          />
-                        )}
+                      {!activeQuestion.options && activeQuestion.inputType === "number" && (
+                        <input
+                          type="number"
+                          value={values[activeQuestion.field] ?? ""}
+                          onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
+                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
+                          placeholder="Ex. 3 sites"
+                          min={1}
+                        />
+                      )}
 
-                        {activeQuestion.inputType === "text" && (
-                          <input
-                            type="text"
-                            value={values[activeQuestion.field] ?? ""}
-                            onChange={(event) =>
-                              handleChange(activeQuestion.field, event.target.value)
-                            }
-                            required
-                            className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          />
-                        )}
+                      {!activeQuestion.options && activeQuestion.inputType === "text" && (
+                        <input
+                          type="text"
+                          value={values[activeQuestion.field] ?? ""}
+                          onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
+                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
+                          placeholder="Ex. Cocody, Zone 4..."
+                        />
+                      )}
 
-                        {activeQuestion.inputType === "tel" && (
-                          <input
-                            type="tel"
-                            value={values[activeQuestion.field] ?? ""}
-                            onChange={(event) =>
-                              handleChange(activeQuestion.field, event.target.value)
-                            }
-                            required
-                            placeholder="Ex : +225 01 02 03 04 05"
-                            className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          />
-                        )}
+                      {!activeQuestion.options && activeQuestion.inputType === "tel" && (
+                        <input
+                          type="tel"
+                          value={values[activeQuestion.field] ?? ""}
+                          onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
+                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
+                          placeholder="Ex. +225 01 02 03 04 05"
+                        />
+                      )}
 
-                        {activeQuestion.inputType === "email" && (
-                          <input
-                            type="email"
-                            value={values[activeQuestion.field] ?? ""}
-                            onChange={(event) =>
-                              handleChange(activeQuestion.field, event.target.value)
-                            }
-                            required
-                            placeholder="Ex : contact@entreprise.ci"
-                            className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          />
-                        )}
+                      {!activeQuestion.options && activeQuestion.inputType === "email" && (
+                        <input
+                          type="email"
+                          value={values[activeQuestion.field] ?? ""}
+                          onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
+                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
+                          placeholder="nom@entreprise.ci"
+                        />
+                      )}
 
-                        {activeQuestion.inputType === "textarea" && (
-                          <textarea
-                            value={values[activeQuestion.field] ?? ""}
-                            onChange={(event) =>
-                              handleChange(activeQuestion.field, event.target.value)
-                            }
-                            rows={4}
-                            className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                            placeholder="Zones sensibles, horaires, procédure souhaitée..."
-                          />
-                        )}
-                      </div>
+                      {!activeQuestion.options && activeQuestion.inputType === "textarea" && (
+                        <textarea
+                          value={values[activeQuestion.field] ?? ""}
+                          onChange={(event) =>
+                            handleChange(activeQuestion.field, event.target.value)
+                          }
+                          rows={4}
+                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
+                          placeholder="Zones sensibles, horaires, procédure souhaitée..."
+                        />
+                      )}
                     </div>
 
                     <button
