@@ -242,14 +242,17 @@ export default function Home() {
               <Image
                 src={logoProalarmeSrc}
                 alt="Logo Pro Alarme"
-                width={160}
-                height={48}
-                className="h-10 w-auto"
+                width={120}
+                height={36}
+                className="h-9 w-auto md:h-10"
                 priority
               />
             </Link>
-            <a href="#devis" className="hover:text-white">
-              Abonnement
+            <a
+              href="#devis"
+              className="inline-flex items-center justify-center rounded-full border border-red-500/50 bg-red-500 px-6 py-2 text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-white shadow-[0_10px_25px_rgba(239,68,68,0.35)] transition hover:border-red-400 hover:bg-red-400 hover:text-white"
+            >
+              Je m’abonne
             </a>
           </nav>
           <div className="grid gap-12 md:grid-cols-[1.1fr_0.9fr] md:items-center">
