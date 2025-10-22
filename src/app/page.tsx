@@ -413,7 +413,7 @@ export default function Home() {
                       Service Pro
                     </span>
                     <p className="mt-3 text-base leading-relaxed text-neutral-100">
-                      Des professionnels qualifiés assurent un suivi constant de vos dispositifs.
+                      Des professionnels qualifiés assurent votre suivi.
                     </p>
                   </div>
                 </div>
@@ -441,30 +441,14 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="bg-white text-black">
-        <section className="border-b border-neutral-200 bg-neutral-50 py-16">
-          <div className="mx-auto grid max-w-6xl gap-8 px-6 sm:grid-cols-3">
-            {trustMetrics.map((metric) => (
-              <div
-                key={metric.label}
-                className="flex flex-col gap-3 rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm"
-              >
-                <span className="text-3xl font-semibold text-red-500">{metric.value}</span>
-                <h3 className="text-base font-semibold text-black">{metric.label}</h3>
-                <p className="text-sm text-neutral-600">{metric.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         <section className="mx-auto max-w-6xl px-6 py-20">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
             <div className="space-y-6">
               <h2 className="text-3xl font-semibold text-black md:text-4xl">
-                Une offre unique, calibrée pour les professionnels exigeants.
+                Une offre unique, calibrée pour Vous!
               </h2>
               <p className="text-lg text-neutral-700">
-                Notre kit standard intègre 2 détecteurs intelligents, 1 sirène intérieure haute intensité et 1 télécommande d’armement. Nous supervisons vos sites 24/7 et déclenchons immédiatement les protocoles en cas d’alerte.
+                Notre kit intègre des détecteurs intelligents, 1 sirène et 1 télécommande d’armement. Nous supervisons vos sites 24/7 et déclenchons immédiatement les protocoles en cas d’alerte.
               </p>
             </div>
             <div className="grid gap-4">
@@ -525,7 +509,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
-                  Techniciennes dédiées pour optimiser vos dispositifs électroniques.
+                  Technicien(ne)s qualifiié(e)s pour vos dispositifs.
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
