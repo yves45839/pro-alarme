@@ -516,12 +516,13 @@ export default function Home() {
                                   setCurrentStep(index);
                                 }
                               }}
-                              className={("flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold uppercase tracking-[0.15em] transition " +
-                                (isActive
+                              className={`flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold uppercase tracking-[0.15em] transition ${
+                                isActive
                                   ? "border-red-500 bg-red-500 text-white shadow-lg shadow-red-500/40"
                                   : isCompleted
                                     ? "border-red-500/60 bg-red-500/10 text-red-500"
-                                    : "border-neutral-200 bg-white text-neutral-400"))
+                                    : "border-neutral-200 bg-white text-neutral-400"
+                              }`}
                               disabled={index > currentStep}
                               aria-label={"Aller a l'etape " + (index + 1)}
                             >
