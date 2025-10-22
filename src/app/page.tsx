@@ -410,10 +410,10 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10" />
                   <div className="absolute bottom-6 left-6 right-6 text-sm text-white">
                     <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.3em] text-red-200">
-                      Vigile certifié
+                      Service Pro
                     </span>
                     <p className="mt-3 text-base leading-relaxed text-neutral-100">
-                      Des professionnels formés localement assurent un suivi constant de vos alarmes critiques.
+                      Des professionnels qualifiés assurent un suivi constant de vos dispositifs.
                     </p>
                   </div>
                 </div>
@@ -489,7 +489,7 @@ export default function Home() {
                 Un accompagnement complet pour sécuriser sans surprise vos opérations.
               </h2>
               <p className="mt-4 text-sm text-neutral-200">
-                Chaque abonnement inclut les prestations nécessaires pour rester opérationnel 24/7 et éviter les coûts cachés.
+                Chaque abonnement inclut les prestations nécessaires pour rester opérationnel 24/7 et pas de coûts cachés.
               </p>
             </div>
             <ul className="flex-1 space-y-4">
@@ -516,12 +516,12 @@ export default function Home() {
                 Des expertes et experts proches de vos réalités terrain.
               </h2>
               <p className="text-lg text-neutral-700">
-                Agents de sécurité, techniciennes et superviseurs basés à Abidjan suivent votre installation et vous accompagnent à chaque étape, de l’audit initial aux interventions urgentes.
+                Agents de sécurité, techniciennes et superviseurs suivent votre installation et vous accompagnent à chaque étape, de l’audit initial aux interventions urgentes.
               </p>
               <ul className="space-y-3 text-sm text-neutral-700">
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
-                  Recrutement local rigoureux et formations continues certifiées.
+                  Recrutement rigoureux et formations continues des équipes.
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
@@ -529,7 +529,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-red-500" />
-                  Supervision 24/7 et reporting détaillé après chaque intervention.
+                  Supervision 24/7 et reporting après chaque intervention.
                 </li>
               </ul>
             </div>
@@ -537,7 +537,7 @@ export default function Home() {
               <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                 <Image
                   src={technicianImageSrc}
-                  alt="Technicienne Pro Alarme installant un détecteur sur site"
+                  alt="Technicienne Pro Alarme installant un système sur site"
                   width={1000}
                   height={1200}
                   className="h-full w-full object-cover"
@@ -828,33 +828,6 @@ export default function Home() {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-neutral-50 py-20">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="mx-auto max-w-3xl text-center">
-              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Ils nous font confiance</span>
-              <h2 className="mt-4 text-3xl font-semibold text-black md:text-4xl">
-                La preuve par l’expérience de nos clientes et clients.
-              </h2>
-              <p className="mt-4 text-sm text-neutral-600">
-                Les directions sûreté, retail et finance qui collaborent avec Pro Alarme soulignent la réduction immédiate des incidents et la sérénité retrouvée de leurs équipes.
-              </p>
-            </div>
-            <div className="mt-12 grid gap-6 md:grid-cols-3">
-              {testimonials.map((testimonial) => (
-                <blockquote
-                  key={testimonial.author}
-                  className="flex h-full flex-col justify-between rounded-3xl border border-neutral-200 bg-white p-6 text-left shadow-sm"
-                >
-                  <p className="text-sm leading-relaxed text-neutral-700">“{testimonial.quote}”</p>
-                  <cite className="mt-6 block text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
-                    {testimonial.author}
-                  </cite>
-                </blockquote>
-              ))}
             </div>
           </div>
         </section>
