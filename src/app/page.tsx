@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import type { SVGProps } from "react";
 
 import agentSecurityImage from "@public/images/agent-securite.png";
-import technicianImage from "@public/images/Technicien.png";
+import technicianImage from "@public/images/technicien.png";
 import telesurveillanceImage from "@public/images/telesurveillance.png";
 
 type IconProps = SVGProps<SVGSVGElement>;
@@ -178,6 +178,26 @@ export default function Home() {
     [currentStep]
   );
 
+  const progressPercentage = useMemo(
+    () => Math.round(((currentStep + 1) / stepQuestions.length) * 100),
+    [currentStep]
+  );
+
+  const liveSummary = useMemo(
+    () =>
+      stepQuestions
+        .filter((question) => {
+          const value = values[question.field];
+          return typeof value === "string" && value.trim().length > 0;
+        })
+        .map((question) => ({
+          id: question.id,
+          label: question.title,
+          value: values[question.field] as string,
+        })),
+    [values]
+  );
+
   const handleNext = () => {
     if (currentStep < stepQuestions.length - 1) {
       setCurrentStep((prev) => prev + 1);
@@ -217,7 +237,7 @@ export default function Home() {
         <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-32 pt-24 md:pt-32">
           <nav className="flex items-center justify-between text-sm uppercase tracking-[0.3em] text-red-200">
             <span className="font-semibold text-red-500">Pro Alarme</span>
-            <a href="#abonnement" className="hover:text-white">
+            <a href="#devis" className="hover:text-white">
               Abonnement
             </a>
           </nav>
@@ -235,9 +255,15 @@ export default function Home() {
               <div className="flex flex-col gap-4 sm:flex-row">
                 <a
                   href="#devis"
-                  className="rounded-full bg-red-500 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_40px_rgba(239,68,68,0.4)] transition hover:bg-red-400"
+                  className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-red-500 via-red-400 to-red-500 px-10 py-4 text-center text-base font-semibold uppercase tracking-[0.25em] text-white shadow-[0_18px_45px_rgba(239,68,68,0.45)] transition hover:from-red-400 hover:via-red-500 hover:to-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
-                  Demander un audit gratuit
+                  <span className="absolute inset-0 translate-y-[120%] bg-white/20 transition duration-500 ease-out group-hover:translate-y-[-10%]" />
+                  <span className="relative flex items-center gap-3">
+                    Demander un audit gratuit
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-xs tracking-[0.3em]">
+                      &gt;
+                    </span>
+                  </span>
                 </a>
                 <a
                   href="tel:+2250102030405"
@@ -402,7 +428,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="devis" className="relative overflow-hidden bg-neutral-100 py-20">
+        <section id="devis" className="relative overflow-hidden bg-neutral-100 py-20 scroll-mt-24">
           <div className="absolute -top-16 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-red-500/10 blur-3xl" />
           <div className="relative mx-auto flex max-w-6xl flex-col gap-12 px-6 md:flex-row">
             <div className="md:w-1/2">
@@ -449,7 +475,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div id="abonnement" className="md:w-1/2">
+            <div className="md:w-1/2">
               <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-xl">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold text-black">Demandez votre abonnement</h3>
@@ -466,7 +492,7 @@ export default function Home() {
                     <div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs uppercase tracking-[0.3em] text-red-500">
-                          Étape {currentStep + 1} / {stepQuestions.length}
+                          Etape {currentStep + 1} / {stepQuestions.length}
                         </span>
                         <button
                           type="button"
@@ -477,7 +503,46 @@ export default function Home() {
                           Retour
                         </button>
                       </div>
-                      <h4 className="mt-4 text-lg font-semibold text-black">{activeQuestion.title}</h4>
+                      <div className="mt-4 flex flex-wrap items-center gap-2">
+                        {stepQuestions.map((question, index) => {
+                          const isActive = index === currentStep;
+                          const isCompleted = index < currentStep;
+                          return (
+                            <button
+                              key={question.id}
+                              type="button"
+                              onClick={() => {
+                                if (index <= currentStep) {
+                                  setCurrentStep(index);
+                                }
+                              }}
+                              className={("flex h-10 w-10 items-center justify-center rounded-full border text-xs font-semibold uppercase tracking-[0.15em] transition " +
+                                (isActive
+                                  ? "border-red-500 bg-red-500 text-white shadow-lg shadow-red-500/40"
+                                  : isCompleted
+                                    ? "border-red-500/60 bg-red-500/10 text-red-500"
+                                    : "border-neutral-200 bg-white text-neutral-400"))
+                              disabled={index > currentStep}
+                              aria-label={"Aller a l'etape " + (index + 1)}
+                            >
+                              <span>{index + 1}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div className="mt-4">
+                        <div className="h-2 w-full rounded-full bg-neutral-200">
+                          <div
+                            className="h-2 rounded-full bg-red-500 transition-all duration-500 ease-out"
+                            style={{ width: progressPercentage + "%" }}
+                          />
+                        </div>
+                        <div className="mt-2 flex items-center justify-between text-[11px] uppercase tracking-[0.3em] text-neutral-400">
+                          <span>Progression</span>
+                          <span>{progressPercentage}%</span>
+                        </div>
+                      </div>
+                      <h4 className="mt-6 text-lg font-semibold text-black">{activeQuestion.title}</h4>
                       <p className="mt-2 text-sm text-neutral-600">{activeQuestion.subtitle}</p>
 
                       <div className="mt-6">
@@ -572,6 +637,19 @@ export default function Home() {
                         ? "Envoyer ma demande"
                         : "Continuer"}
                     </button>
+                    {liveSummary.length > 0 && (
+                      <div className="rounded-2xl border border-neutral-100 bg-neutral-50 px-5 py-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500">Recapitulatif en direct</p>
+                        <ul className="mt-3 space-y-2 text-sm text-neutral-700">
+                          {liveSummary.map((item) => (
+                            <li key={item.id} className="flex items-start justify-between gap-3">
+                              <span className="max-w-[55%] font-medium text-neutral-500">{item.label}</span>
+                              <span className="flex-1 text-right text-neutral-900">{item.value}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </form>
                 ) : (
                   <div className="mt-8 space-y-6">
