@@ -1,10 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { SVGProps } from "react";
 
 import agentSecurityImage from "@public/images/agent-securite.png";
+import logoProalarme from "@public/images/logo_proalarme.png";
 import technicianImage from "@public/images/technicien.png";
 import telesurveillanceImage from "@public/images/telesurveillance.png";
 
@@ -236,7 +238,16 @@ export default function Home() {
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,#ff1f1f,transparent_55%)]" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-32 pt-24 md:pt-32">
           <nav className="flex items-center justify-between text-sm uppercase tracking-[0.3em] text-red-200">
-            <span className="font-semibold text-red-500">Pro Alarme</span>
+            <Link href="/" className="flex items-center" aria-label="Accueil Pro Alarme">
+              <Image
+                src={logoProalarme}
+                alt="Logo Pro Alarme"
+                width={160}
+                height={48}
+                className="h-10 w-auto"
+                priority
+              />
+            </Link>
             <a href="#devis" className="hover:text-white">
               Abonnement
             </a>
