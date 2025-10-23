@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import Script from "next/script";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { SVGProps } from "react";
 
@@ -87,6 +88,74 @@ const faqs = [
       "Oui, notre équipe conçoit un plan sur-mesure et ajoute les détecteurs nécessaires lors de la visite technique initiale.",
   },
 ];
+
+const businessStructuredData = {
+  "@context": "https://schema.org",
+  "@type": ["LocalBusiness", "SecurityService"],
+  "@id": "https://www.proalarme.ci/#organisation",
+  name: "Pro Alarme Côte d’Ivoire",
+  url: "https://www.proalarme.ci/",
+  telephone: "+2250710701212",
+  description:
+    "Système d'alarme professionnel Pro Alarme : installation, télésurveillance et intervention express 24/7 partout à Abidjan.",
+  image: "https://www.proalarme.ci/images/agent-securite.png",
+  priceRange: "$$",
+  areaServed: {
+    "@type": "City",
+    name: "Abidjan",
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Abidjan",
+    addressCountry: "CI",
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
+      opens: "00:00",
+      closes: "23:59",
+    },
+  ],
+  makesOffer: [
+    {
+      "@type": "Offer",
+      name: "Abonnement télésurveillance professionnelle",
+      price: "65000",
+      priceCurrency: "XOF",
+      availability: "https://schema.org/InStock",
+      description:
+        "Abonnement mensuel à 65 000 F CFA incluant installation, télésurveillance et interventions express.",
+    },
+  ],
+  brand: {
+    "@type": "Brand",
+    name: "Pro Alarme",
+  },
+  serviceType:
+    "Installation et supervision de systèmes d'alarme professionnels pour entreprises et résidences à Abidjan",
+};
+
+const faqStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
 
 const pricingHighlights = [
   "Abonnement mensuel à 65 000 F CFA",
@@ -319,6 +388,12 @@ export default function Home() {
 
   return (
     <div className="bg-[#0d0d0d] text-white">
+      <Script id="structured-data-localbusiness" type="application/ld+json">
+        {JSON.stringify(businessStructuredData)}
+      </Script>
+      <Script id="structured-data-faq" type="application/ld+json">
+        {JSON.stringify(faqStructuredData)}
+      </Script>
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,#ff1f1f,transparent_55%)]" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-32 pt-24 md:pt-32">
@@ -442,6 +517,38 @@ export default function Home() {
       </header>
 
       <main>
+        <section
+          className="border-y border-white/10 bg-black py-16"
+          aria-labelledby="metrics-heading"
+        >
+          <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl space-y-4">
+              <span className="text-xs uppercase tracking-[0.3em] text-red-300">
+                Pourquoi choisir Pro Alarme
+              </span>
+              <h2 id="metrics-heading" className="text-3xl font-semibold text-white md:text-4xl">
+                Des indicateurs de performance vérifiables.
+              </h2>
+              <p className="text-sm text-neutral-300">
+                Nous combinons la technologie, la supervision locale et des interventions terrain pour garantir un temps de
+                réponse minimal et une satisfaction durable.
+              </p>
+            </div>
+            <dl className="grid flex-1 gap-6 sm:grid-cols-3">
+              {trustMetrics.map((metric) => (
+                <div
+                  key={metric.label}
+                  className="rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-[0_18px_45px_rgba(0,0,0,0.4)]"
+                >
+                  <dt className="text-xs uppercase tracking-[0.3em] text-red-200">{metric.label}</dt>
+                  <dd className="mt-3 text-3xl font-semibold text-white">{metric.value}</dd>
+                  <dd className="mt-2 text-sm text-neutral-200">{metric.description}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
         <section
           id="devis"
           className="relative overflow-hidden bg-neutral-100 py-20 scroll-mt-24"
@@ -817,6 +924,34 @@ export default function Home() {
                 </div>
               );
             })}
+          </div>
+        </section>
+
+        <section className="bg-neutral-100 py-20">
+          <div className="mx-auto max-w-6xl space-y-10 px-6">
+            <div className="space-y-4 text-center">
+              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Ils nous recommandent</span>
+              <h2 className="text-3xl font-semibold text-black md:text-4xl">
+                Témoignages d’équipes sécurisées par Pro Alarme.
+              </h2>
+              <p className="mx-auto max-w-3xl text-sm text-neutral-700">
+                Directions d’entrepôts, réseaux bancaires et commerces de proximité soulignent la réactivité de nos opérateurs
+                et la qualité du suivi terrain.
+              </p>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {testimonials.map((testimonial) => (
+                <figure
+                  key={testimonial.author}
+                  className="flex h-full flex-col justify-between rounded-3xl border border-neutral-200 bg-white p-8 shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
+                >
+                  <blockquote className="text-sm leading-relaxed text-neutral-700">“{testimonial.quote}”</blockquote>
+                  <figcaption className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500">
+                    {testimonial.author}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
         </section>
 
