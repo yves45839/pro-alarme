@@ -1,6 +1,10 @@
-﻿import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
+const logoProalarmeSrc = "/images/logo_proalarme.png" as const;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -87,7 +91,27 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+        <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/85 backdrop-blur">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-3 text-white md:py-4">
+            <Link href="/" className="flex items-center" aria-label="Accueil Pro Alarme">
+              <Image
+                src={logoProalarmeSrc}
+                alt="Logo Pro Alarme"
+                width={160}
+                height={48}
+                className="h-10 w-auto md:h-12"
+                priority
+              />
+            </Link>
+            <a
+              href="tel:+2250710701212"
+              className="inline-flex items-center justify-center rounded-full border border-red-500/60 bg-red-500 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-[0_10px_25px_rgba(239,68,68,0.35)] transition hover:border-red-400 hover:bg-red-400 md:px-6 md:py-2.5"
+            >
+              Recevoir un appel gratuit
+            </a>
+          </div>
+        </header>
+        <main className="pt-20 md:pt-24">{children}</main>
       </body>
     </html>
   );
