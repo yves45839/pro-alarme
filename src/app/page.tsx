@@ -417,7 +417,7 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                <div className="relative -mt-10 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+                <div className="relative mt-6 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur md:-mt-10">
                   <div className="flex items-center justify-between text-xs text-white/70">
                     <span>Réponse 24/7</span>
                     <span>Centre de télésurveillance</span>
