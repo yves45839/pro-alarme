@@ -299,8 +299,12 @@ export default function Home() {
 
   const formCardRef = useRef<HTMLDivElement | null>(null);
 
-  const createDelayStyle = (delay: number): CSSProperties => ({
-    ["--scroll-animate-delay" as const]: `${delay}ms`,
+  type ScrollAnimationStyle = CSSProperties & {
+    "--scroll-animate-delay"?: string;
+  };
+
+  const createDelayStyle = (delay: number): ScrollAnimationStyle => ({
+    "--scroll-animate-delay": `${delay}ms`,
   });
 
   useEffect(() => {
