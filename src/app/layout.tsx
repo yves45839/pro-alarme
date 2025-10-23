@@ -13,9 +13,60 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pro Alarme | Sécurité professionnelle 24/7 à Abidjan",
+  metadataBase: new URL("https://www.proalarme.ci"),
+  title: {
+    default: "Pro Alarme | Sécurité professionnelle 24/7 à Abidjan",
+    template: "%s | Pro Alarme",
+  },
   description:
     "Système d'alarme professionnel Pro Alarme : installation, télésurveillance et intervention express 24/7 partout à Abidjan.",
+  keywords: [
+    "pro alarme",
+    "système d'alarme",
+    "télésurveillance Abidjan",
+    "sécurité entreprise Côte d'Ivoire",
+    "installation alarme professionnelle",
+    "intervention sécurité 24/7",
+  ],
+  category: "Security Service",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Pro Alarme | Sécurité professionnelle 24/7 à Abidjan",
+    description:
+      "Installation de systèmes d'alarme, télésurveillance et intervention express 24/7 partout à Abidjan.",
+    url: "/",
+    siteName: "Pro Alarme",
+    locale: "fr_FR",
+    type: "website",
+    images: [
+      {
+        url: "/images/agent-securite.png",
+        width: 1200,
+        height: 630,
+        alt: "Agent de sécurité Pro Alarme supervisant un centre de contrôle",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pro Alarme | Sécurité professionnelle 24/7 à Abidjan",
+    description:
+      "Installation de systèmes d'alarme, télésurveillance et intervention express 24/7 partout à Abidjan.",
+    images: ["/images/agent-securite.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      maxSnippet: -1,
+      maxImagePreview: "large",
+      maxVideoPreview: -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/images/favicon.ico", type: "image/x-icon" },
