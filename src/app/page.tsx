@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Script from "next/script";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { SVGProps } from "react";
+import type { CSSProperties, SVGProps } from "react";
 
 const logoProalarmeSrc = "/images/logo_proalarme.png" as const;
 const agentSecurityImageSrc = "/images/agent-securite.png" as const;
@@ -299,6 +299,40 @@ export default function Home() {
 
   const formCardRef = useRef<HTMLDivElement | null>(null);
 
+  const createDelayStyle = (delay: number): CSSProperties => ({
+    ["--scroll-animate-delay" as const]: `${delay}ms`,
+  });
+
+  useEffect(() => {
+    const elements = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-animate-on-scroll]")
+    );
+
+    if (!elements.length) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries, observerInstance) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const target = entry.target as HTMLElement;
+            target.dataset.visible = "true";
+            observerInstance.unobserve(target);
+          }
+        });
+      },
+      {
+        threshold: 0.2,
+        rootMargin: "0px 0px -10% 0px",
+      }
+    );
+
+    elements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
   const activeQuestion: StepQuestion = useMemo(
     () => stepQuestions[Math.min(currentStep, stepQuestions.length - 1)],
     [currentStep]
@@ -397,7 +431,11 @@ export default function Home() {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,#ff1f1f,transparent_55%)]" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-32 pt-24 md:pt-32">
-          <nav className="flex items-center justify-between text-sm uppercase tracking-[0.3em] text-red-200">
+          <nav
+            data-animate-on-scroll
+            style={createDelayStyle(0)}
+            className="flex items-center justify-between text-sm uppercase tracking-[0.3em] text-red-200"
+          >
             <Link href="/" className="flex items-center" aria-label="Accueil Pro Alarme">
               <Image
                 src={logoProalarmeSrc}
@@ -416,7 +454,11 @@ export default function Home() {
             </a>
           </nav>
           <div className="grid gap-12 md:grid-cols-[1.1fr_0.9fr] md:items-center">
-            <div className="space-y-8">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(160)}
+              className="space-y-8"
+            >
               <span className="inline-flex items-center gap-2 rounded-full border border-red-500/40 bg-red-500/10 px-4 py-1 text-xs uppercase tracking-[0.3em] text-red-200">
                 Protection totale Abidjan
               </span>
@@ -468,11 +510,19 @@ export default function Home() {
                 </a>
               </div>
             </div>
-            <div className="relative flex h-full justify-center">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(280)}
+              className="relative flex h-full justify-center"
+            >
               <div className="absolute -left-8 top-8 hidden h-32 w-32 rounded-full border border-red-500/40 md:block" />
               <div className="absolute -right-10 bottom-6 hidden h-24 w-24 rounded-full border border-red-500/30 md:block" />
               <div className="relative w-full max-w-md">
-                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+                <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(120)}
+                  className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+                >
                   <Image
                     src={agentSecurityImageSrc}
                     alt="Agent de sécurité Pro Alarme supervisant un centre de contrôle"
@@ -492,7 +542,11 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                <div className="relative mt-6 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur md:-mt-10">
+                <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(280)}
+                  className="relative mt-6 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur md:-mt-10"
+                >
                   <div className="flex items-center justify-between text-xs text-white/70">
                     <span>Réponse 24/7</span>
                     <span>Centre de télésurveillance</span>
@@ -518,6 +572,7 @@ export default function Home() {
 
       <main>
         <section
+          data-animate-on-scroll
           className="border-y border-white/10 bg-black py-16"
           aria-labelledby="metrics-heading"
         >
@@ -535,8 +590,10 @@ export default function Home() {
               </p>
             </div>
             <dl className="grid flex-1 gap-6 sm:grid-cols-3">
-              {trustMetrics.map((metric) => (
+              {trustMetrics.map((metric, index) => (
                 <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(index * 120)}
                   key={metric.label}
                   className="rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-[0_18px_45px_rgba(0,0,0,0.4)]"
                 >
@@ -550,12 +607,17 @@ export default function Home() {
         </section>
 
         <section
+          data-animate-on-scroll
           id="devis"
           className="relative overflow-hidden bg-neutral-100 py-20 scroll-mt-24"
         >
           <div className="absolute -top-16 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-red-500/10 blur-3xl" />
           <div className="relative mx-auto flex max-w-6xl flex-col gap-12 px-6 md:flex-row">
-            <div className="md:w-1/2">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(0)}
+              className="md:w-1/2"
+            >
               <span className="text-xs uppercase tracking-[0.3em] text-red-500">Comment ça marche</span>
               <h2 className="mt-4 text-3xl font-semibold text-black md:text-4xl">
                 Un processus fluide pour sécuriser vos sites sans friction.
@@ -564,7 +626,11 @@ export default function Home() {
                 Répondez à quelques questions, nos experts vous recontactent immédiatement pour un diagnostic personnalisé et la planification de l’installation.
               </p>
               <div className="mt-8 space-y-6">
-                <div className="flex items-start gap-4">
+                <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(160)}
+                  className="flex items-start gap-4"
+                >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-lg font-semibold text-white">
                     1
                   </span>
@@ -575,7 +641,11 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
+                <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(260)}
+                  className="flex items-start gap-4"
+                >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-lg font-semibold text-white">
                     2
                   </span>
@@ -586,7 +656,11 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
+                <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(360)}
+                  className="flex items-start gap-4"
+                >
                   <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-lg font-semibold text-white">
                     3
                   </span>
@@ -599,9 +673,15 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="md:w-1/2">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(240)}
+              className="md:w-1/2"
+            >
               <div
                 ref={formCardRef}
+                data-animate-on-scroll
+                style={createDelayStyle(360)}
                 className="rounded-3xl border border-black/10 bg-white p-8 shadow-xl"
               >
                 <div className="flex items-center justify-between">
@@ -794,9 +874,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-6 py-20">
+        <section data-animate-on-scroll className="mx-auto max-w-6xl px-6 py-20">
           <div className="grid gap-10 md:grid-cols-2 md:items-center">
-            <div className="space-y-6">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(0)}
+              className="space-y-6"
+            >
               <h2 className="text-3xl font-semibold text-black md:text-4xl">
                 Une offre unique, calibrée pour Vous!
               </h2>
@@ -805,8 +889,10 @@ export default function Home() {
               </p>
             </div>
             <div className="grid gap-4">
-              {pricingHighlights.map((item) => (
+              {pricingHighlights.map((item, index) => (
                 <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(index * 100)}
                   key={item}
                   className="flex items-start gap-4 rounded-2xl border border-neutral-200 bg-neutral-50/80 px-6 py-5 shadow-sm"
                 >
@@ -818,9 +904,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-black py-20 text-white">
+        <section data-animate-on-scroll className="bg-black py-20 text-white">
           <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 lg:flex-row">
-            <div className="lg:w-2/5">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(0)}
+              className="lg:w-2/5"
+            >
               <span className="text-xs uppercase tracking-[0.3em] text-red-300">Tout est compris</span>
               <h2 className="mt-4 text-3xl font-semibold text-white md:text-4xl">
                 Un accompagnement complet pour sécuriser sans surprise vos opérations.
@@ -830,8 +920,10 @@ export default function Home() {
               </p>
             </div>
             <ul className="flex-1 space-y-4">
-              {includedFeatures.map((feature) => (
+              {includedFeatures.map((feature, index) => (
                 <li
+                  data-animate-on-scroll
+                  style={createDelayStyle(index * 120)}
                   key={feature}
                   className="rounded-3xl border border-white/10 bg-white/5 px-6 py-5 text-sm leading-relaxed text-neutral-100"
                 >
@@ -845,9 +937,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-neutral-50 py-20">
+        <section data-animate-on-scroll className="bg-neutral-50 py-20">
           <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 lg:flex-row">
-            <div className="space-y-6 lg:w-1/2">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(0)}
+              className="space-y-6 lg:w-1/2"
+            >
               <span className="text-xs uppercase tracking-[0.3em] text-red-500">Notre équipe</span>
               <h2 className="text-3xl font-semibold text-black md:text-4xl">
                 Des expertes et experts proches de vos réalités terrain.
@@ -871,7 +967,11 @@ export default function Home() {
               </ul>
             </div>
             <div className="grid flex-1 gap-6 md:grid-cols-2">
-              <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+              <div
+                data-animate-on-scroll
+                style={createDelayStyle(160)}
+                className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+              >
                 <Image
                   src={technicianImageSrc}
                   alt="Technicienne Pro Alarme installant un système sur site"
@@ -882,7 +982,11 @@ export default function Home() {
                 />
               </div>
               <div className="grid gap-6">
-                <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+                <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(240)}
+                  className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                >
                   <Image
                     src={telesurveillanceImageSrc}
                     alt="Opérateur de télésurveillance surveillant les alertes en temps réel"
@@ -892,7 +996,11 @@ export default function Home() {
                     sizes="(min-width: 768px) 320px, 100vw"
                   />
                 </div>
-                <div className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
+                <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(320)}
+                  className="relative overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.12)]"
+                >
                   <Image
                     src={agentSecurityImageSrc}
                     alt="Agent de sécurité Pro Alarme échangeant avec une cliente"
@@ -907,12 +1015,14 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-black py-20 text-white">
+        <section data-animate-on-scroll className="bg-black py-20 text-white">
           <div className="mx-auto grid max-w-6xl gap-10 px-6 md:grid-cols-3">
-            {advantages.map((advantage) => {
+            {advantages.map((advantage, index) => {
               const Icon = advantage.icon;
               return (
                 <div
+                  data-animate-on-scroll
+                  style={createDelayStyle(index * 140)}
                   key={advantage.title}
                   className="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
                 >
@@ -927,9 +1037,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-neutral-100 py-20">
+        <section data-animate-on-scroll className="bg-neutral-100 py-20">
           <div className="mx-auto max-w-6xl space-y-10 px-6">
-            <div className="space-y-4 text-center">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(0)}
+              className="space-y-4 text-center"
+            >
               <span className="text-xs uppercase tracking-[0.3em] text-red-500">Ils nous recommandent</span>
               <h2 className="text-3xl font-semibold text-black md:text-4xl">
                 Témoignages d’équipes sécurisées par Pro Alarme.
@@ -940,8 +1054,10 @@ export default function Home() {
               </p>
             </div>
             <div className="grid gap-6 md:grid-cols-3">
-              {testimonials.map((testimonial) => (
+              {testimonials.map((testimonial, index) => (
                 <figure
+                  data-animate-on-scroll
+                  style={createDelayStyle(index * 160)}
                   key={testimonial.author}
                   className="flex h-full flex-col justify-between rounded-3xl border border-neutral-200 bg-white p-8 shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
                 >
@@ -955,14 +1071,16 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-white py-20">
+        <section data-animate-on-scroll className="bg-white py-20">
           <div className="mx-auto max-w-5xl space-y-8 px-6">
             <h2 className="text-center text-3xl font-semibold text-black">
               Questions fréquentes
             </h2>
             <div className="space-y-4">
-              {faqs.map((faq) => (
+              {faqs.map((faq, index) => (
                 <details
+                  data-animate-on-scroll
+                  style={createDelayStyle(index * 120)}
                   key={faq.question}
                   className="group rounded-3xl border border-neutral-200 bg-neutral-50 px-6 py-5 transition hover:shadow-lg"
                 >
@@ -977,9 +1095,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-black py-20 text-white">
+        <section data-animate-on-scroll className="bg-black py-20 text-white">
           <div className="mx-auto flex max-w-5xl flex-col items-center gap-10 px-6 text-center">
-            <div className="max-w-3xl space-y-4">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(0)}
+              className="max-w-3xl space-y-4"
+            >
               <span className="text-xs uppercase tracking-[0.3em] text-red-300">Passer à l’action</span>
               <h2 className="text-3xl font-semibold md:text-4xl">
                 Réservez votre audit gratuit et sécurisez vos sites dès cette semaine.
@@ -988,7 +1110,11 @@ export default function Home() {
                 Un conseiller dédié coordonne la visite technique, valide votre plan de sécurisation et active la télésurveillance sans coupure d’activité.
               </p>
             </div>
-            <div className="flex flex-col gap-4 sm:flex-row">
+            <div
+              data-animate-on-scroll
+              style={createDelayStyle(200)}
+              className="flex flex-col gap-4 sm:flex-row"
+            >
               <button
                 type="button"
                 onClick={handleActivateForm}
@@ -1004,8 +1130,13 @@ export default function Home() {
               </a>
             </div>
             <ul className="grid gap-3 text-left text-xs text-neutral-300 sm:grid-cols-3">
-              {guarantees.map((guarantee) => (
-                <li key={guarantee} className="flex items-start gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+              {guarantees.map((guarantee, index) => (
+                <li
+                  data-animate-on-scroll
+                  style={createDelayStyle(index * 140)}
+                  key={guarantee}
+                  className="flex items-start gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
+                >
                   <span className="mt-0.5 text-red-300">•</span>
                   <span>{guarantee}</span>
                 </li>
