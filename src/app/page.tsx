@@ -425,7 +425,7 @@ export default function Home() {
               className="space-y-8"
             >
               <span className="inline-flex items-center gap-2 rounded-full border border-red-500/40 bg-red-500/10 px-4 py-1 text-xs uppercase tracking-[0.3em] text-red-200">
-                Protection totale Abidjan
+                Protection total sur Abidjan
               </span>
               <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl md:text-6xl">
                 Le système d’alarme professionnel pensé pour la réactivité absolue.
