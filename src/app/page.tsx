@@ -1,12 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import Script from "next/script";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, SVGProps } from "react";
 
-const logoProalarmeSrc = "/images/logo_proalarme.png" as const;
 const agentSecurityImageSrc = "/images/agent-securite.png" as const;
 const technicianImageSrc = "/images/technicien.png" as const;
 const telesurveillanceImageSrc = "/images/telesurveillance.png" as const;
@@ -396,28 +394,6 @@ export default function Home() {
       <header className="relative overflow-hidden">
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,#ff1f1f,transparent_55%)]" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-32 pt-24 md:pt-32">
-          <nav
-            data-animate-on-scroll
-            style={createDelayStyle(0)}
-            className="flex items-center justify-between text-sm uppercase tracking-[0.3em] text-red-200"
-          >
-            <Link href="/" className="flex items-center" aria-label="Accueil Pro Alarme">
-              <Image
-                src={logoProalarmeSrc}
-                alt="Logo Pro Alarme"
-                width={180}
-                height={54}
-                className="h-12 w-auto md:h-14"
-                priority
-              />
-            </Link>
-            <a
-              href="#devis"
-              className="inline-flex items-center justify-center rounded-full border border-red-500/50 bg-red-500 px-6 py-2 text-[0.75rem] font-semibold uppercase tracking-[0.3em] text-white shadow-[0_10px_25px_rgba(239,68,68,0.35)] transition hover:border-red-400 hover:bg-red-400 hover:text-white"
-            >
-              Je m’abonne
-            </a>
-          </nav>
           <div className="grid gap-12 md:grid-cols-[1.1fr_0.9fr] md:items-center">
             <div
               data-animate-on-scroll
