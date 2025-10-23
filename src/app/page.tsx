@@ -165,50 +165,11 @@ const pricingHighlights = [
   "À partir de 2 sites : 5 % de remise supplémentaire par site",
 ];
 
-const trustMetrics = [
-  {
-    value: "4 500+",
-    label: "interventions gérées chaque année",
-    description:
-      "Des équipes locales rompus aux procédures d’urgence, capables d’intervenir immédiatement sur le terrain.",
-  },
-  {
-    value: "98 %",
-    label: "de clients renouvellent leur abonnement",
-    description:
-      "La fiabilité du matériel et le suivi proactif rassurent les directions sécurité les plus exigeantes.",
-  },
-  {
-    value: "15 min",
-    label: "maximum avant arrivée sur site",
-    description:
-      "Nos patrouilles sont positionnées stratégiquement à Abidjan pour réduire au minimum votre fenêtre de risque.",
-  },
-];
-
 const includedFeatures = [
   "Installation complète par des techniciennes certifiées et audit de vulnérabilité sur site.",
   "Télésurveillance 24/7 avec levée de doute audio/vidéo et rapport d’intervention systématique.",
   "Maintenance préventive et remplacement des équipements défaillants inclus sans frais additionnels.",
   "Tableau de bord client pour suivre l’état des détecteurs, les historiques d’alertes et les interventions.",
-];
-
-const testimonials = [
-  {
-    quote:
-      "Depuis l’installation, nous avons éliminé les intrusions nocturnes. Les rapports reçus après chaque alerte facilitent nos décisions de sûreté.",
-    author: "Fatou K., Directrice d’entrepôt logistique",
-  },
-  {
-    quote:
-      "Les opérateurs Pro Alarme rappellent en moins d’une minute. Leur rigueur rassure nos équipes même en horaires décalés.",
-    author: "Jean-Marc A., Responsable d’agence bancaire",
-  },
-  {
-    quote:
-      "Nous avons regroupé quatre sites et réduit nos coûts de sécurité de 18 % tout en améliorant la réactivité.",
-    author: "Mariam S., Gérante de réseau de boutiques",
-  },
 ];
 
 const guarantees = [
@@ -575,41 +536,6 @@ export default function Home() {
       </header>
 
       <main>
-        <section
-          data-animate-on-scroll
-          className="border-y border-white/10 bg-black py-16"
-          aria-labelledby="metrics-heading"
-        >
-          <div className="mx-auto flex max-w-6xl flex-col gap-10 px-6 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl space-y-4">
-              <span className="text-xs uppercase tracking-[0.3em] text-red-300">
-                Pourquoi choisir Pro Alarme
-              </span>
-              <h2 id="metrics-heading" className="text-3xl font-semibold text-white md:text-4xl">
-                Des indicateurs de performance vérifiables.
-              </h2>
-              <p className="text-sm text-neutral-300">
-                Nous combinons la technologie, la supervision locale et des interventions terrain pour garantir un temps de
-                réponse minimal et une satisfaction durable.
-              </p>
-            </div>
-            <dl className="grid flex-1 gap-6 sm:grid-cols-3">
-              {trustMetrics.map((metric, index) => (
-                <div
-                  data-animate-on-scroll
-                  style={createDelayStyle(index * 120)}
-                  key={metric.label}
-                  className="rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-[0_18px_45px_rgba(0,0,0,0.4)]"
-                >
-                  <dt className="text-xs uppercase tracking-[0.3em] text-red-200">{metric.label}</dt>
-                  <dd className="mt-3 text-3xl font-semibold text-white">{metric.value}</dd>
-                  <dd className="mt-2 text-sm text-neutral-200">{metric.description}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </section>
-
         <section
           data-animate-on-scroll
           id="devis"
@@ -1038,40 +964,6 @@ export default function Home() {
                 </div>
               );
             })}
-          </div>
-        </section>
-
-        <section data-animate-on-scroll className="bg-neutral-100 py-20">
-          <div className="mx-auto max-w-6xl space-y-10 px-6">
-            <div
-              data-animate-on-scroll
-              style={createDelayStyle(0)}
-              className="space-y-4 text-center"
-            >
-              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Ils nous recommandent</span>
-              <h2 className="text-3xl font-semibold text-black md:text-4xl">
-                Témoignages d’équipes sécurisées par Pro Alarme.
-              </h2>
-              <p className="mx-auto max-w-3xl text-sm text-neutral-700">
-                Directions d’entrepôts, réseaux bancaires et commerces de proximité soulignent la réactivité de nos opérateurs
-                et la qualité du suivi terrain.
-              </p>
-            </div>
-            <div className="grid gap-6 md:grid-cols-3">
-              {testimonials.map((testimonial, index) => (
-                <figure
-                  data-animate-on-scroll
-                  style={createDelayStyle(index * 160)}
-                  key={testimonial.author}
-                  className="flex h-full flex-col justify-between rounded-3xl border border-neutral-200 bg-white p-8 shadow-[0_18px_45px_rgba(15,23,42,0.08)]"
-                >
-                  <blockquote className="text-sm leading-relaxed text-neutral-700">“{testimonial.quote}”</blockquote>
-                  <figcaption className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-neutral-500">
-                    {testimonial.author}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
           </div>
         </section>
 
