@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Script from "next/script";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, SVGProps } from "react";
+import type { CSSProperties, ReactNode, SVGProps } from "react";
 
 const agentSecurityImageSrc = "/images/agent-securite.png" as const;
 const technicianImageSrc = "/images/technicien.png" as const;
@@ -45,6 +45,52 @@ const HeadsetIcon = (props: IconProps) => (
       strokeLinejoin="round"
     />
     <path d="M10 18h4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const HomeIcon = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <path
+      d="m4 11 8-7 8 7v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9Z"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M9 21v-6h6v6" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const OfficeBuildingIcon = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <path
+      d="M4 21h16V3H8v18ZM8 7h4M8 11h4M8 15h4M14 7h4M14 11h4M14 15h4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M10 21v-4h4v4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const StorefrontIcon = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <path
+      d="M3 9h18l-1-5H4L3 9Zm2 0v10h14V9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M9 19v-4h6v4" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M7 4V2m10 2V2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const WarehouseIcon = (props: IconProps) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} {...props}>
+    <path
+      d="M2 20V9l10-5 10 5v11"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path d="M6 19v-6h12v6" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M9 13v6m6-6v6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
@@ -177,17 +223,22 @@ const guarantees = [
 ];
 
 type StepValues = {
-  siteType?: string;
-  siteCount?: string;
-  location?: string;
+  buildingType?: string;
+  accessDoorRange?: string;
+  landmark?: string;
   phone?: string;
   email?: string;
-  notes?: string;
 };
 
 type StepField = keyof StepValues;
 
-type InputType = "select" | "number" | "text" | "tel" | "email" | "textarea";
+type InputType = "select" | "text" | "tel" | "email";
+
+type StepOption = {
+  label: string;
+  value: string;
+  icon?: ReactNode;
+};
 
 type StepQuestion = {
   id: number;
@@ -195,58 +246,80 @@ type StepQuestion = {
   subtitle: string;
   field: StepField;
   inputType: InputType;
-  options?: string[];
+  options?: StepOption[];
+  required?: boolean;
+  placeholder?: string;
 };
 
 const stepQuestions: StepQuestion[] = [
   {
     id: 1,
-    title: "Quel type de site souhaitez-vous protéger ?",
-    subtitle: "Choisissez la configuration principale pour adapter la solution.",
-    field: "siteType",
+    title: "Quel type de bâtiment souhaitez-vous sécuriser ?",
+    subtitle: "Sélectionnez le lieu principal pour personnaliser votre abonnement.",
+    field: "buildingType",
     inputType: "select",
+    required: true,
     options: [
-      "Résidence principale",
-      "Entreprise / Bureau",
-      "Commerce / Magasin",
-      "Entrepôt / Site industriel",
-      "Autre (précisez)",
+      {
+        label: "Résidentiel",
+        value: "Résidentiel",
+        icon: <HomeIcon className="h-8 w-8" />,
+      },
+      {
+        label: "Bureaux",
+        value: "Bureaux",
+        icon: <OfficeBuildingIcon className="h-8 w-8" />,
+      },
+      {
+        label: "Commerce",
+        value: "Commerce",
+        icon: <StorefrontIcon className="h-8 w-8" />,
+      },
+      {
+        label: "Entrepôt / Industriel",
+        value: "Entrepôt / Industriel",
+        icon: <WarehouseIcon className="h-8 w-8" />,
+      },
     ],
   },
   {
     id: 2,
-    title: "Combien de sites sont à sécuriser ?",
-    subtitle: "Nos offres multi-sites déclenchent automatiquement les remises adaptées.",
-    field: "siteCount",
-    inputType: "number",
+    title: "Combien de portes d’accès possède votre bâtiment ?",
+    subtitle: "Choisissez la plage qui correspond le mieux à votre configuration actuelle.",
+    field: "accessDoorRange",
+    inputType: "select",
+    required: true,
+    options: [
+      { label: "Moins de 3 accès", value: "Moins de 3 portes" },
+      { label: "Entre 3 et 5 accès", value: "3 à 5 portes" },
+      { label: "Plus de 5 accès", value: "Plus de 5 portes" },
+    ],
   },
   {
     id: 3,
-    title: "Où se situe votre site principal ?",
-    subtitle: "Nous intervenons partout à Abidjan en moins de 15 minutes.",
-    field: "location",
+    title: "Quel est le repère le plus proche de votre site ?",
+    subtitle: "Exemple : Stade Félix Houphouët-Boigny, Centre commercial, carrefour majeur…",
+    field: "landmark",
     inputType: "text",
+    required: true,
+    placeholder: "Ex. Stade Félix Houphouët-Boigny",
   },
   {
     id: 4,
     title: "Quel est votre numéro de téléphone ?",
-    subtitle: "Nous privilégions l’appel pour valider l’audit de sécurité.",
+    subtitle: "Un expert vous appellera rapidement pour finaliser votre audit.",
     field: "phone",
     inputType: "tel",
+    required: true,
+    placeholder: "Ex. +225 07 10 70 12 12",
   },
   {
     id: 5,
-    title: "Quelle adresse e-mail devons-nous utiliser pour vos factures ?",
-    subtitle: "Recevez également nos offres promotionnelles dédiées aux clients Pro Alarme.",
+    title: "Quelle adresse e-mail pouvons-nous utiliser ?",
+    subtitle: "L’e-mail est facultatif : il sert pour les devis et suivis écrits.",
     field: "email",
     inputType: "email",
-  },
-  {
-    id: 6,
-    title: "Souhaitez-vous ajouter un commentaire ?",
-    subtitle: "Précisez vos besoins particuliers (zones sensibles, horaires, etc.).",
-    field: "notes",
-    inputType: "textarea",
+    placeholder: "nom@entreprise.ci",
   },
 ];
 
@@ -257,6 +330,7 @@ export default function Home() {
   const [isFormActive, setIsFormActive] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<StepField, string | null>>({});
 
   const formCardRef = useRef<HTMLDivElement | null>(null);
 
@@ -267,6 +341,38 @@ export default function Home() {
   const createDelayStyle = (delay: number): ScrollAnimationStyle => ({
     "--scroll-animate-delay": `${delay}ms`,
   });
+
+  const validateQuestion = (question: StepQuestion) => {
+    const rawValue = values[question.field];
+    const value = typeof rawValue === "string" ? rawValue.trim() : "";
+    let errorMessage: string | null = null;
+
+    if (question.required && value.length === 0) {
+      errorMessage = "Ce champ est obligatoire.";
+    }
+
+    if (!errorMessage && question.field === "phone" && value.length > 0) {
+      const phoneRegex = /^\+?[0-9\s.-]{6,}$/;
+      if (!phoneRegex.test(value)) {
+        errorMessage = "Veuillez indiquer un numéro valide.";
+      }
+    }
+
+    if (!errorMessage && question.field === "email" && value.length > 0) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        errorMessage = "Veuillez indiquer une adresse e-mail valide.";
+      }
+    }
+
+    if (errorMessage) {
+      setFieldErrors((prev) => ({ ...prev, [question.field]: errorMessage }));
+      return false;
+    }
+
+    setFieldErrors((prev) => ({ ...prev, [question.field]: null }));
+    return true;
+  };
 
   useEffect(() => {
     const elements = Array.from(
@@ -337,6 +443,7 @@ export default function Home() {
 
   const handleChange = (field: keyof StepValues, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
+    setFieldErrors((prev) => ({ ...prev, [field]: null }));
   };
 
   const handleActivateForm = () => {
@@ -346,6 +453,7 @@ export default function Home() {
     setIsSubmitted(false);
     setIsSending(false);
     setSubmitError(null);
+    setFieldErrors({});
 
     setTimeout(() => {
       formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -354,6 +462,12 @@ export default function Home() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    const question = activeQuestion;
+    const isValid = validateQuestion(question);
+    if (!isValid) {
+      return;
+    }
 
     if (currentStep < stepQuestions.length - 1) {
       handleNext();
@@ -368,12 +482,18 @@ export default function Home() {
     setSubmitError(null);
 
     try {
+      const payload = Object.fromEntries(
+        Object.entries(values).map(([key, value]) => [
+          key,
+          typeof value === "string" ? value.trim() : value,
+        ])
+      );
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -391,11 +511,12 @@ export default function Home() {
     }
   };
 
-  const handleOptionSelect = (option: string) => {
-    handleChange(activeQuestion.field, option);
+  const handleOptionSelect = (optionValue: string) => {
+    const field = activeQuestion.field;
+    handleChange(field, optionValue);
     setTimeout(() => {
       setCurrentStep((prev) => Math.min(prev + 1, stepQuestions.length - 1));
-    }, 150);
+    }, 180);
   };
 
   useEffect(() => {
@@ -412,14 +533,15 @@ export default function Home() {
 
   const summary = useMemo(() => {
     return [
-      { label: "Type de site", value: values.siteType },
-      { label: "Nombre de sites", value: values.siteCount },
-      { label: "Localisation", value: values.location },
+      { label: "Type de bâtiment", value: values.buildingType },
+      { label: "Portes d’accès", value: values.accessDoorRange },
+      { label: "Repère à proximité", value: values.landmark },
       { label: "Téléphone", value: values.phone },
       { label: "E-mail", value: values.email },
-      { label: "Notes", value: values.notes },
     ].filter((item) => item.value && item.value.trim().length > 0);
   }, [values]);
+
+  const activeError = fieldErrors[activeQuestion.field] ?? null;
 
   return (
     <div className="bg-[#0d0d0d] text-white">
@@ -687,43 +809,47 @@ export default function Home() {
                       {activeQuestion.options ? (
                         <div className="grid gap-3 sm:grid-cols-2">
                           {activeQuestion.options.map((option) => {
-                            const isSelected = values[activeQuestion.field] === option;
+                            const isSelected = values[activeQuestion.field] === option.value;
                             return (
                               <button
-                                key={option}
+                                key={option.value}
                                 type="button"
-                                onClick={() => handleOptionSelect(option)}
-                                className={`rounded-2xl border px-4 py-3 text-left text-sm transition ${
+                                onClick={() => handleOptionSelect(option.value)}
+                                className={`flex items-center gap-3 rounded-2xl border px-4 py-4 text-left transition ${
                                   isSelected
-                                    ? "border-red-500 bg-red-50 text-red-600"
-                                    : "border-neutral-200 bg-white text-neutral-800 hover:border-red-400 hover:bg-red-50"
+                                    ? "border-red-500 bg-red-50 text-red-600 shadow-sm"
+                                    : "border-neutral-200 bg-white text-neutral-800 hover:border-red-400 hover:bg-red-50/60"
                                 }`}
+                                aria-pressed={isSelected}
                               >
-                                {option}
+                                {option.icon ? (
+                                  <span
+                                    className={`flex h-12 w-12 items-center justify-center rounded-full ${
+                                      isSelected
+                                        ? "bg-red-500/15 text-red-500"
+                                        : "bg-neutral-100 text-neutral-600"
+                                    }`}
+                                  >
+                                    {option.icon}
+                                  </span>
+                                ) : null}
+                                <span className="text-sm font-medium leading-tight">{option.label}</span>
                               </button>
                             );
                           })}
                         </div>
                       ) : null}
 
-                      {!activeQuestion.options && activeQuestion.inputType === "number" && (
-                        <input
-                          type="number"
-                          value={values[activeQuestion.field] ?? ""}
-                          onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
-                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          placeholder="Ex. 3 sites"
-                          min={1}
-                        />
-                      )}
-
                       {!activeQuestion.options && activeQuestion.inputType === "text" && (
                         <input
                           type="text"
                           value={values[activeQuestion.field] ?? ""}
                           onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
-                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          placeholder="Ex. Cocody, Zone 4..."
+                          className={`w-full rounded-2xl border px-4 py-3 text-sm text-neutral-800 focus:outline-none ${
+                            activeError ? "border-red-500" : "border-neutral-200 focus:border-red-500"
+                          }`}
+                          placeholder={activeQuestion.placeholder}
+                          aria-invalid={Boolean(activeError)}
                         />
                       )}
 
@@ -732,33 +858,31 @@ export default function Home() {
                           type="tel"
                           value={values[activeQuestion.field] ?? ""}
                           onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
-                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          placeholder="Ex. +225 01 02 03 04 05"
+                          className={`w-full rounded-2xl border px-4 py-3 text-sm text-neutral-800 focus:outline-none ${
+                            activeError ? "border-red-500" : "border-neutral-200 focus:border-red-500"
+                          }`}
+                          placeholder={activeQuestion.placeholder}
+                          aria-invalid={Boolean(activeError)}
                         />
                       )}
 
-                      {!activeQuestion.options && activeQuestion.inputType === "email" && (
-                        <input
-                          type="email"
-                          value={values[activeQuestion.field] ?? ""}
-                          onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
-                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          placeholder="nom@entreprise.ci"
-                        />
-                      )}
+                        {!activeQuestion.options && activeQuestion.inputType === "email" && (
+                          <input
+                            type="email"
+                            value={values[activeQuestion.field] ?? ""}
+                            onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
+                            className={`w-full rounded-2xl border px-4 py-3 text-sm text-neutral-800 focus:outline-none ${
+                              activeError ? "border-red-500" : "border-neutral-200 focus:border-red-500"
+                            }`}
+                            placeholder={activeQuestion.placeholder}
+                            aria-invalid={Boolean(activeError)}
+                          />
+                        )}
 
-                      {!activeQuestion.options && activeQuestion.inputType === "textarea" && (
-                        <textarea
-                          value={values[activeQuestion.field] ?? ""}
-                          onChange={(event) =>
-                            handleChange(activeQuestion.field, event.target.value)
-                          }
-                          rows={4}
-                          className="w-full rounded-2xl border border-neutral-200 px-4 py-3 text-sm text-neutral-800 focus:border-red-500 focus:outline-none"
-                          placeholder="Zones sensibles, horaires, procédure souhaitée..."
-                        />
-                      )}
-                    </div>
+                        {activeError ? (
+                          <p className="text-xs text-red-500">{activeError}</p>
+                        ) : null}
+                      </div>
 
                     <button
                       type="submit"
