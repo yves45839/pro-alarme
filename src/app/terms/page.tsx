@@ -31,7 +31,7 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-semibold text-black">3. Tarifs et facturation</h2>
           <p>
-            Le tarif mensuel standard est fixé à 65 000 F CFA. Des remises peuvent s’appliquer selon la périodicité de
+            Le tarif mensuel standard est fixé à 50 000 F CFA. Des remises peuvent s’appliquer selon la périodicité de
             paiement (10 % annuel, 5 % trimestriel) et le nombre de sites sécurisés (5 % supplémentaires par site à partir
             de deux sites). Les frais d’installation, d’un montant de 100 000 F CFA pour le kit de base, sont facturés lors de
             la mise en service.
