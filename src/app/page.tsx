@@ -430,6 +430,15 @@ export default function Home() {
         {JSON.stringify(faqStructuredData)}
       </Script>
       <header className="relative overflow-hidden">
+        <Image
+          src="/images/Pont-abidjan.png"
+          alt="Pont d'Abidjan traversant la lagune"
+          fill
+          priority
+          className="absolute inset-0 h-full w-full object-cover opacity-60"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-black/70" aria-hidden />
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,#ff1f1f,transparent_55%)]" />
         <div className="relative mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-32 pt-24 md:pt-32">
           <div className="grid gap-12 md:grid-cols-[1.1fr_0.9fr] md:items-center">
@@ -580,9 +589,6 @@ export default function Home() {
                   </span>
                   <div>
                     <h3 className="text-lg font-semibold text-black">Questions ciblées</h3>
-                    <p className="text-sm text-neutral-700">
-                      Un mini-audit pour adapter l’offre à vos contraintes opérationnelles.
-                    </p>
                   </div>
                 </div>
                 <div
@@ -595,9 +601,6 @@ export default function Home() {
                   </span>
                   <div>
                     <h3 className="text-lg font-semibold text-black">Validation & devis</h3>
-                    <p className="text-sm text-neutral-700">
-                      En moins d’une heure, vous recevez votre proposition détaillée par e-mail.
-                    </p>
                   </div>
                 </div>
                 <div
@@ -610,9 +613,6 @@ export default function Home() {
                   </span>
                   <div>
                     <h3 className="text-lg font-semibold text-black">Installation express</h3>
-                    <p className="text-sm text-neutral-700">
-                      Installation et tests en 48h, supervision active dès le premier jour.
-                    </p>
                   </div>
                 </div>
               </div>
