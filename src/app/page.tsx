@@ -255,6 +255,8 @@ export default function Home() {
   const [values, setValues] = useState<StepValues>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isFormActive, setIsFormActive] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const formCardRef = useRef<HTMLDivElement | null>(null);
 
@@ -342,15 +344,51 @@ export default function Home() {
     setCurrentStep(0);
     setValues({});
     setIsSubmitted(false);
+    setIsSending(false);
+    setSubmitError(null);
 
     setTimeout(() => {
       formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleNext();
+
+    if (currentStep < stepQuestions.length - 1) {
+      handleNext();
+      return;
+    }
+
+    if (isSending) {
+      return;
+    }
+
+    setIsSending(true);
+    setSubmitError(null);
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        throw new Error("Réponse invalide du serveur");
+      }
+
+      handleNext();
+    } catch (error) {
+      console.error("Erreur lors de l'envoi du formulaire", error);
+      setSubmitError(
+        "Une erreur est survenue lors de l'envoi. Merci de réessayer dans quelques instants.",
+      );
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleOptionSelect = (option: string) => {
@@ -724,12 +762,18 @@ export default function Home() {
 
                     <button
                       type="submit"
-                      className="flex w-full items-center justify-center gap-2 rounded-full bg-red-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400"
+                      disabled={isSending}
+                      className="flex w-full items-center justify-center gap-2 rounded-full bg-red-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-70"
                     >
                       {currentStep === stepQuestions.length - 1
-                        ? "Envoyer ma demande"
+                        ? isSending
+                          ? "Envoi..."
+                          : "Envoyer ma demande"
                         : "Continuer"}
                     </button>
+                    {submitError ? (
+                      <p className="text-center text-xs text-red-500">{submitError}</p>
+                    ) : null}
                     {liveSummary.length > 0 && (
                       <div className="rounded-2xl border border-neutral-100 bg-neutral-50 px-5 py-4">
                         <p className="text-[11px] uppercase tracking-[0.25em] text-neutral-500">Recapitulatif en direct</p>
