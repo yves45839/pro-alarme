@@ -105,12 +105,6 @@ export default function RootLayout({
               />
             </Link>
             <div className="flex items-center gap-4">
-              <a
-                href="tel:+2250710701212"
-                className="inline-flex items-center justify-center rounded-full border border-red-500/60 bg-red-500 px-5 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-[0_10px_25px_rgba(239,68,68,0.35)] transition hover:border-red-400 hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 md:px-6 md:py-2.5"
-              >
-                Recevoir un appel gratuit
-              </a>
               <DappelleCallButton />
             </div>
           </div>
