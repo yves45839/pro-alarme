@@ -330,7 +330,8 @@ export default function Home() {
   const [isFormActive, setIsFormActive] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = useState<Record<StepField, string | null>>({});
+  const [fieldErrors, setFieldErrors] =
+    useState<Partial<Record<StepField, string | null>>>({});
 
   const formCardRef = useRef<HTMLDivElement | null>(null);
 
