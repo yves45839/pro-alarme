@@ -413,6 +413,11 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  const activeQuestion: StepQuestion = useMemo(
+    () => stepQuestions[Math.min(currentStep, stepQuestions.length - 1)],
+    [currentStep]
+  );
+
   useEffect(() => {
     if (activeQuestion.field !== "location") {
       setShowLocationSuggestions(false);
@@ -496,11 +501,6 @@ export default function Home() {
       }
     };
   }, []);
-
-  const activeQuestion: StepQuestion = useMemo(
-    () => stepQuestions[Math.min(currentStep, stepQuestions.length - 1)],
-    [currentStep]
-  );
 
   const progressPercentage = useMemo(
     () => Math.round(((currentStep + 1) / stepQuestions.length) * 100),
