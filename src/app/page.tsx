@@ -222,10 +222,23 @@ const guarantees = [
   "Accompagnement dédié : un interlocuteur unique suit votre dossier.",
 ];
 
+const GEOAPIFY_API_KEY = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY;
+
+type GeoapifyFeatureProperties = {
+  formatted?: string;
+};
+
+type GeoapifyFeature = {
+  properties?: GeoapifyFeatureProperties;
+};
+
+type GeoapifyAutocompleteResponse = {
+  features?: GeoapifyFeature[];
+};
+
 type StepValues = {
   buildingType?: string;
-  accessDoorRange?: string;
-  landmark?: string;
+  location?: string;
   phone?: string;
   email?: string;
 };
@@ -284,28 +297,16 @@ const stepQuestions: StepQuestion[] = [
   },
   {
     id: 2,
-    title: "Combien de portes d’accès possède votre bâtiment ?",
-    subtitle: "Choisissez la plage qui correspond le mieux à votre configuration actuelle.",
-    field: "accessDoorRange",
-    inputType: "select",
+    title: "Où se situe le site à protéger ?",
+    subtitle:
+      "Commencez à saisir l’adresse ou un lieu, puis sélectionnez la proposition correspondante.",
+    field: "location",
+    inputType: "text",
     required: true,
-    options: [
-      { label: "Moins de 3 accès", value: "Moins de 3 portes" },
-      { label: "Entre 3 et 5 accès", value: "3 à 5 portes" },
-      { label: "Plus de 5 accès", value: "Plus de 5 portes" },
-    ],
+    placeholder: "Ex. Plateau, Abidjan",
   },
   {
     id: 3,
-    title: "Quel est le repère le plus proche de votre site ?",
-    subtitle: "Exemple : Stade Félix Houphouët-Boigny, Centre commercial, carrefour majeur…",
-    field: "landmark",
-    inputType: "text",
-    required: true,
-    placeholder: "Ex. Stade Félix Houphouët-Boigny",
-  },
-  {
-    id: 4,
     title: "Quel est votre numéro de téléphone ?",
     subtitle: "Un expert vous appellera rapidement pour finaliser votre audit.",
     field: "phone",
@@ -314,7 +315,7 @@ const stepQuestions: StepQuestion[] = [
     placeholder: "Ex. +225 07 10 70 12 12",
   },
   {
-    id: 5,
+    id: 4,
     title: "Quelle adresse e-mail pouvons-nous utiliser ?",
     subtitle: "L’e-mail est facultatif : il sert pour les devis et suivis écrits.",
     field: "email",
@@ -332,8 +333,15 @@ export default function Home() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] =
     useState<Partial<Record<StepField, string | null>>>({});
+  const [locationSuggestions, setLocationSuggestions] = useState<string[]>([]);
+  const [isFetchingLocationSuggestions, setIsFetchingLocationSuggestions] =
+    useState(false);
+  const [showLocationSuggestions, setShowLocationSuggestions] =
+    useState(false);
 
   const formCardRef = useRef<HTMLDivElement | null>(null);
+  const locationBlurTimeoutRef = useRef<number | null>(null);
+  const hasLocationAutocomplete = Boolean(GEOAPIFY_API_KEY);
 
   type ScrollAnimationStyle = CSSProperties & {
     "--scroll-animate-delay"?: string;
@@ -405,6 +413,90 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (activeQuestion.field !== "location") {
+      setShowLocationSuggestions(false);
+      setIsFetchingLocationSuggestions(false);
+      setLocationSuggestions([]);
+      return;
+    }
+
+    const query = (values.location ?? "").trim();
+
+    if (!GEOAPIFY_API_KEY || query.length < 3) {
+      setLocationSuggestions([]);
+      setIsFetchingLocationSuggestions(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    let isCancelled = false;
+
+    setIsFetchingLocationSuggestions(true);
+
+    const timeoutId = window.setTimeout(async () => {
+      try {
+        const url = new URL("https://api.geoapify.com/v1/geocode/autocomplete");
+        url.searchParams.set("text", query);
+        url.searchParams.set("format", "json");
+        url.searchParams.set("limit", "5");
+        url.searchParams.set("apiKey", GEOAPIFY_API_KEY as string);
+        url.searchParams.set("filter", "countrycode:ci");
+
+        const response = await fetch(url.toString(), {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Geoapify request failed with status ${response.status}`,
+          );
+        }
+
+        const data = (await response.json()) as GeoapifyAutocompleteResponse;
+
+        if (!isCancelled) {
+          const suggestions =
+            data.features
+              ?.map((feature) => feature.properties?.formatted)
+              .filter((formatted): formatted is string => Boolean(formatted)) ?? [];
+
+          setLocationSuggestions(suggestions);
+        }
+      } catch (error) {
+        const errorName =
+          error instanceof Error ? error.name : (error as { name?: string }).name;
+        const isAbortError = errorName === "AbortError";
+
+        if (!isCancelled && !isAbortError) {
+          console.error(
+            "Erreur lors de la récupération des suggestions Geoapify",
+            error,
+          );
+          setLocationSuggestions([]);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsFetchingLocationSuggestions(false);
+        }
+      }
+    }, 350);
+
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [activeQuestion.field, values.location]);
+
+  useEffect(() => {
+    return () => {
+      if (locationBlurTimeoutRef.current !== null) {
+        window.clearTimeout(locationBlurTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const activeQuestion: StepQuestion = useMemo(
     () => stepQuestions[Math.min(currentStep, stepQuestions.length - 1)],
     [currentStep]
@@ -447,6 +539,38 @@ export default function Home() {
     setFieldErrors((prev) => ({ ...prev, [field]: null }));
   };
 
+  const handleLocationFocus = () => {
+    if (locationBlurTimeoutRef.current !== null) {
+      window.clearTimeout(locationBlurTimeoutRef.current);
+      locationBlurTimeoutRef.current = null;
+    }
+
+    if (hasLocationAutocomplete) {
+      setShowLocationSuggestions(true);
+    }
+  };
+
+  const handleLocationBlur = () => {
+    if (locationBlurTimeoutRef.current !== null) {
+      window.clearTimeout(locationBlurTimeoutRef.current);
+    }
+
+    locationBlurTimeoutRef.current = window.setTimeout(() => {
+      setShowLocationSuggestions(false);
+    }, 120);
+  };
+
+  const handleLocationSelect = (suggestion: string) => {
+    if (locationBlurTimeoutRef.current !== null) {
+      window.clearTimeout(locationBlurTimeoutRef.current);
+      locationBlurTimeoutRef.current = null;
+    }
+
+    handleChange("location", suggestion);
+    setShowLocationSuggestions(false);
+    setLocationSuggestions([]);
+  };
+
   const handleActivateForm = () => {
     setIsFormActive(true);
     setCurrentStep(0);
@@ -455,6 +579,13 @@ export default function Home() {
     setIsSending(false);
     setSubmitError(null);
     setFieldErrors({});
+    setLocationSuggestions([]);
+    setShowLocationSuggestions(false);
+
+    if (locationBlurTimeoutRef.current !== null) {
+      window.clearTimeout(locationBlurTimeoutRef.current);
+      locationBlurTimeoutRef.current = null;
+    }
 
     setTimeout(() => {
       formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -535,8 +666,7 @@ export default function Home() {
   const summary = useMemo(() => {
     return [
       { label: "Type de bâtiment", value: values.buildingType },
-      { label: "Portes d’accès", value: values.accessDoorRange },
-      { label: "Repère à proximité", value: values.landmark },
+      { label: "Lieu à sécuriser", value: values.location },
       { label: "Téléphone", value: values.phone },
       { label: "E-mail", value: values.email },
     ].filter((item) => item.value && item.value.trim().length > 0);
@@ -849,16 +979,88 @@ export default function Home() {
                       ) : null}
 
                       {!activeQuestion.options && activeQuestion.inputType === "text" && (
-                        <input
-                          type="text"
-                          value={values[activeQuestion.field] ?? ""}
-                          onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
-                          className={`w-full rounded-2xl border px-4 py-3 text-sm text-neutral-800 focus:outline-none ${
-                            activeError ? "border-red-500" : "border-neutral-200 focus:border-red-500"
-                          }`}
-                          placeholder={activeQuestion.placeholder}
-                          aria-invalid={Boolean(activeError)}
-                        />
+                        activeQuestion.field === "location" ? (
+                          <div className="relative">
+                            <input
+                              type="text"
+                              value={values.location ?? ""}
+                              onChange={(event) => {
+                                handleChange("location", event.target.value);
+                                if (hasLocationAutocomplete) {
+                                  if (locationBlurTimeoutRef.current !== null) {
+                                    window.clearTimeout(locationBlurTimeoutRef.current);
+                                    locationBlurTimeoutRef.current = null;
+                                  }
+                                  setShowLocationSuggestions(true);
+                                }
+                              }}
+                              onFocus={handleLocationFocus}
+                              onBlur={handleLocationBlur}
+                              className={`w-full rounded-2xl border px-4 py-3 text-sm text-neutral-800 focus:outline-none ${
+                                activeError
+                                  ? "border-red-500"
+                                  : "border-neutral-200 focus:border-red-500"
+                              }`}
+                              placeholder={activeQuestion.placeholder}
+                              aria-invalid={Boolean(activeError)}
+                              role={hasLocationAutocomplete ? "combobox" : undefined}
+                              aria-expanded={
+                                hasLocationAutocomplete ? showLocationSuggestions : undefined
+                              }
+                              aria-controls={
+                                hasLocationAutocomplete ? "location-suggestions" : undefined
+                              }
+                              aria-autocomplete={hasLocationAutocomplete ? "list" : undefined}
+                              aria-haspopup={hasLocationAutocomplete ? "listbox" : undefined}
+                              autoComplete="off"
+                            />
+                            {hasLocationAutocomplete && showLocationSuggestions && (
+                              <div
+                                id="location-suggestions"
+                                role="listbox"
+                                className="absolute z-20 mt-2 max-h-60 w-full overflow-y-auto rounded-2xl border border-neutral-200 bg-white shadow-xl"
+                              >
+                                {isFetchingLocationSuggestions ? (
+                                  <p className="px-4 py-3 text-sm text-neutral-500">
+                                    Recherche en cours…
+                                  </p>
+                                ) : locationSuggestions.length > 0 ? (
+                                  <ul className="divide-y divide-neutral-100">
+                                    {locationSuggestions.map((suggestion) => (
+                                      <li key={suggestion}>
+                                        <button
+                                          type="button"
+                                          className="flex w-full items-start px-4 py-3 text-left text-sm text-neutral-700 transition hover:bg-red-50"
+                                          onMouseDown={(event) => event.preventDefault()}
+                                          onClick={() => handleLocationSelect(suggestion)}
+                                        >
+                                          {suggestion}
+                                        </button>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ) : (values.location ?? "").trim().length >= 3 ? (
+                                  <p className="px-4 py-3 text-sm text-neutral-500">
+                                    Aucun lieu trouvé. Essayez une autre saisie.
+                                  </p>
+                                ) : null}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <input
+                            type="text"
+                            value={values[activeQuestion.field] ?? ""}
+                            onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
+                            className={`w-full rounded-2xl border px-4 py-3 text-sm text-neutral-800 focus:outline-none ${
+                              activeError
+                                ? "border-red-500"
+                                : "border-neutral-200 focus:border-red-500"
+                            }`}
+                            placeholder={activeQuestion.placeholder}
+                            aria-invalid={Boolean(activeError)}
+                          />
+                        )
                       )}
 
                       {!activeQuestion.options && activeQuestion.inputType === "tel" && (
@@ -928,6 +1130,10 @@ export default function Home() {
                       </h4>
                       <p className="mt-2 text-sm text-neutral-300">
                         Un conseiller Pro Alarme vous rappellera sous 15 minutes au numéro indiqué pour valider votre abonnement.
+                      </p>
+                      <p className="mt-4 text-sm text-neutral-300">
+                        Le démarrage de votre contrat demandera un règlement global de 150 000 F CFA&nbsp;:
+                        100 000 F CFA de frais d’installation puis 50 000 F CFA pour le premier mois d’abonnement.
                       </p>
                     </div>
                     <div className="space-y-4">
