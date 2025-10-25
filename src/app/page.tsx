@@ -413,6 +413,90 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    if (activeQuestion.field !== "location") {
+      setShowLocationSuggestions(false);
+      setIsFetchingLocationSuggestions(false);
+      setLocationSuggestions([]);
+      return;
+    }
+
+    const query = (values.location ?? "").trim();
+
+    if (!GEOAPIFY_API_KEY || query.length < 3) {
+      setLocationSuggestions([]);
+      setIsFetchingLocationSuggestions(false);
+      return;
+    }
+
+    const controller = new AbortController();
+    let isCancelled = false;
+
+    setIsFetchingLocationSuggestions(true);
+
+    const timeoutId = window.setTimeout(async () => {
+      try {
+        const url = new URL("https://api.geoapify.com/v1/geocode/autocomplete");
+        url.searchParams.set("text", query);
+        url.searchParams.set("format", "json");
+        url.searchParams.set("limit", "5");
+        url.searchParams.set("apiKey", GEOAPIFY_API_KEY as string);
+        url.searchParams.set("filter", "countrycode:ci");
+
+        const response = await fetch(url.toString(), {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Geoapify request failed with status ${response.status}`,
+          );
+        }
+
+        const data = (await response.json()) as GeoapifyAutocompleteResponse;
+
+        if (!isCancelled) {
+          const suggestions =
+            data.features
+              ?.map((feature) => feature.properties?.formatted)
+              .filter((formatted): formatted is string => Boolean(formatted)) ?? [];
+
+          setLocationSuggestions(suggestions);
+        }
+      } catch (error) {
+        const errorName =
+          error instanceof Error ? error.name : (error as { name?: string }).name;
+        const isAbortError = errorName === "AbortError";
+
+        if (!isCancelled && !isAbortError) {
+          console.error(
+            "Erreur lors de la récupération des suggestions Geoapify",
+            error,
+          );
+          setLocationSuggestions([]);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsFetchingLocationSuggestions(false);
+        }
+      }
+    }, 350);
+
+    return () => {
+      isCancelled = true;
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
+  }, [activeQuestion.field, values.location]);
+
+  useEffect(() => {
+    return () => {
+      if (locationBlurTimeoutRef.current !== null) {
+        window.clearTimeout(locationBlurTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const activeQuestion: StepQuestion = useMemo(
     () => stepQuestions[Math.min(currentStep, stepQuestions.length - 1)],
     [currentStep]
