@@ -173,11 +173,11 @@ const businessStructuredData = {
     {
       "@type": "Offer",
       name: "Abonnement télésurveillance professionnelle",
-      price: "65000",
+      price: "50000",
       priceCurrency: "XOF",
       availability: "https://schema.org/InStock",
       description:
-        "Abonnement mensuel à 65 000 F CFA incluant installation, télésurveillance et interventions express.",
+        "Abonnement mensuel à 50 000 F CFA incluant installation, télésurveillance et interventions express.",
     },
   ],
   brand: {
@@ -202,7 +202,7 @@ const faqStructuredData = {
 };
 
 const pricingHighlights = [
-  "Abonnement mensuel à 65 000 F CFA",
+  "Abonnement mensuel à seulement 50 000 F CFA",
   "Frais d’installation à 100 000 F CFA incluant 2 détecteurs, 1 sirène et 1 télécommande",
   "Remise de 10 % pour un paiement annuel",
   "Remise de 5 % pour un paiement trimestriel",
@@ -619,6 +619,13 @@ export default function Home() {
                 >
                   Nous appeler maintenant
                 </a>
+              </div>
+              <div className="max-w-sm rounded-3xl border border-red-500/40 bg-red-500/10 p-6 text-left shadow-[0_18px_45px_rgba(239,68,68,0.2)]">
+                <p className="text-xs uppercase tracking-[0.3em] text-red-200">Offre transparente</p>
+                <p className="mt-3 text-3xl font-semibold text-white">50 000 F CFA / mois</p>
+                <p className="mt-2 text-sm text-neutral-100">
+                  Frais d’installation uniques à 100 000 F CFA avec le kit complet inclus et la télésurveillance 24/7.
+                </p>
               </div>
             </div>
             <div
