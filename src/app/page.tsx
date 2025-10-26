@@ -122,11 +122,6 @@ const faqs = [
       "Les abonnements sont sans engagement long terme. Vous pouvez résilier à tout moment avec un préavis de 30 jours.",
   },
   {
-    question: "Comment fonctionnent les remises multi-sites ?",
-    answer:
-      "À partir de deux sites, une remise additionnelle de 5 % est appliquée sur chacun des sites sécurisés.",
-  },
-  {
     question: "Puis-je ajouter des détecteurs supplémentaires ?",
     answer:
       "Oui, notre équipe conçoit un plan sur-mesure et ajoute les détecteurs nécessaires lors de la visite technique initiale.",
@@ -204,9 +199,9 @@ const faqStructuredData = {
 const pricingHighlights = [
   "Abonnement mensuel à seulement 50 000 F CFA",
   "Frais d’installation à 100 000 F CFA incluant 2 détecteurs, 1 sirène et 1 télécommande",
-  "Remise de 10 % pour un paiement annuel",
-  "Remise de 5 % pour un paiement trimestriel",
-  "À partir de 2 sites : 5 % de remise supplémentaire par site",
+  "Extension modulable : nous ajoutons les détecteurs requis pour chaque nouveau site",
+  "Supervision 24/7 et interventions express incluses dans chaque formule",
+  "Tableau de bord client pour suivre alertes et interventions en temps réel",
 ];
 
 const includedFeatures = [
@@ -1197,7 +1192,7 @@ export default function Home() {
               <h2 className="text-3xl font-semibold text-black md:text-4xl">
                 Une offre unique, calibrée pour Vous!
               </h2>
-              <p className="text-lg text-neutral-700">
+              <p className="text-lg text-white">
                 Notre solution évolutive s’adapte à vos besoins : nous dimensionnons l’équipement et les détecteurs nécessaires pour protéger chaque site, puis déclenchons immédiatement les protocoles en cas d’alerte.
               </p>
             </div>
