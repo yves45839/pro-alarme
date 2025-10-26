@@ -749,12 +749,29 @@ export default function Home() {
                 >
                   Nous appeler maintenant
                 </a>
+                <a
+                  href="https://wa.me/2250710701212"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-green-500/30 bg-green-500/20 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-green-100 transition hover:border-green-400 hover:text-white"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-5 w-5"
+                    aria-hidden
+                  >
+                    <path d="M12.04 2C6.58 2 2.2 6.26 2.2 11.62c0 1.83.53 3.58 1.52 5.12L2 22l5.4-1.64c1.52.83 3.24 1.27 5.04 1.27 5.46 0 9.84-4.26 9.84-9.62C22.28 6.26 17.5 2 12.04 2Zm0 17.5c-1.54 0-3.04-.41-4.36-1.18l-.31-.18-3.2.97.94-3.07-.2-.32a8 8 0 0 1-1.22-4.1c0-4.4 3.66-7.98 8.15-7.98s8.15 3.58 8.15 7.98-3.66 7.98-8.15 7.98Zm4.47-5.9c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12s-.62.78-.76.94c-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.18-.7-.63-1.16-1.4-1.3-1.64-.14-.24-.01-.36.1-.48.1-.1.24-.26.36-.4.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.28-.74-1.76-.2-.48-.4-.4-.54-.4-.14 0-.3-.02-.46-.02-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.58 4.12 3.6.58.25 1.04.4 1.4.51.6.19 1.14.16 1.56.1.48-.07 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28Z" />
+                  </svg>
+                  WhatsApp +225 07 10 70 12 12
+                </a>
               </div>
               <div className="max-w-sm rounded-3xl border border-red-500/40 bg-red-500/10 p-6 text-left shadow-[0_18px_45px_rgba(239,68,68,0.2)]">
                 <p className="text-xs uppercase tracking-[0.3em] text-red-200">Offre transparente</p>
                 <p className="mt-3 text-3xl font-semibold text-white">50 000 F CFA / mois</p>
                 <p className="mt-2 text-sm text-neutral-100">
-                  Frais d’installation uniques à 100 000 F CFA avec le kit complet inclus et la télésurveillance 24/7.
+                  Frais d’installation uniques à 100 000 F CFA avec la télésurveillance 24/7 incluse.
                 </p>
               </div>
             </div>
@@ -795,7 +812,7 @@ export default function Home() {
                   style={createDelayStyle(280)}
                   className="relative mt-6 rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur md:-mt-10"
                 >
-                  <div className="flex items-center justify-between text-xs text-white/70">
+                  <div className="flex items-center justify-between text-xs text-white/90">
                     <span>Réponse 24/7</span>
                     <span>Centre de télésurveillance</span>
                   </div>
@@ -803,12 +820,12 @@ export default function Home() {
                     <div className="rounded-2xl bg-black/60 px-6 py-5">
                       <p className="text-sm uppercase tracking-[0.3em] text-red-300">Incidents</p>
                       <p className="mt-3 text-3xl font-semibold text-white">&lt; 60 s</p>
-                      <p className="mt-1 text-sm text-neutral-300">Temps moyen de prise en charge</p>
+                      <p className="mt-1 text-sm text-neutral-100">Temps moyen de prise en charge</p>
                     </div>
                     <div className="rounded-2xl bg-black/60 px-6 py-5">
                       <p className="text-sm uppercase tracking-[0.3em] text-red-300">Interventions</p>
                       <p className="mt-3 text-3xl font-semibold text-white">&lt; 15 min</p>
-                      <p className="mt-1 text-sm text-neutral-300">Déploiement d’agents partout à Abidjan</p>
+                      <p className="mt-1 text-sm text-neutral-100">Déploiement d’agents partout à Abidjan</p>
                     </div>
                   </div>
                 </div>
@@ -1128,10 +1145,10 @@ export default function Home() {
                       <h4 className="text-lg font-semibold text-white">
                         Merci ! Votre demande est enregistrée.
                       </h4>
-                      <p className="mt-2 text-sm text-neutral-300">
+                      <p className="mt-2 text-sm text-neutral-100">
                         Un conseiller Pro Alarme vous rappellera sous 15 minutes au numéro indiqué pour valider votre abonnement.
                       </p>
-                      <p className="mt-4 text-sm text-neutral-300">
+                      <p className="mt-4 text-sm text-neutral-100">
                         Le démarrage de votre contrat demandera un règlement global de 150 000 F CFA&nbsp;:
                         100 000 F CFA de frais d’installation puis 50 000 F CFA pour le premier mois d’abonnement.
                       </p>
@@ -1154,6 +1171,14 @@ export default function Home() {
                       >
                         Écrire au service commercial
                       </a>
+                      <a
+                        href="https://wa.me/2250710701212"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center gap-2 rounded-full border border-green-500 px-6 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-green-700 transition hover:bg-green-500 hover:text-white"
+                      >
+                        Contacter via WhatsApp
+                      </a>
                     </div>
                   </div>
                 )}
@@ -1173,7 +1198,7 @@ export default function Home() {
                 Une offre unique, calibrée pour Vous!
               </h2>
               <p className="text-lg text-neutral-700">
-                Notre kit intègre des détecteurs intelligents, 1 sirène et 1 télécommande d’armement. Nous supervisons vos sites 24/7 et déclenchons immédiatement les protocoles en cas d’alerte.
+                Notre solution évolutive s’adapte à vos besoins : nous dimensionnons l’équipement et les détecteurs nécessaires pour protéger chaque site, puis déclenchons immédiatement les protocoles en cas d’alerte.
               </p>
             </div>
             <div className="grid gap-4">
@@ -1382,8 +1407,16 @@ export default function Home() {
               >
                 Parler à une experte maintenant
               </a>
+              <a
+                href="https://wa.me/2250710701212"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-green-500/30 bg-green-500/20 px-10 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-green-100 transition hover:border-green-400 hover:text-white"
+              >
+                Échanger sur WhatsApp
+              </a>
             </div>
-            <ul className="grid gap-3 text-left text-xs text-neutral-300 sm:grid-cols-3">
+            <ul className="grid gap-3 text-left text-xs text-neutral-100 sm:grid-cols-3">
               {guarantees.map((guarantee, index) => (
                 <li
                   data-animate-on-scroll
