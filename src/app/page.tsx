@@ -413,6 +413,8 @@ export default function Home() {
     [currentStep]
   );
 
+  const firstQuestion = stepQuestions[0];
+
   useEffect(() => {
     if (activeQuestion.field !== "location") {
       setShowLocationSuggestions(false);
@@ -567,20 +569,23 @@ export default function Home() {
   };
 
   const handleActivateForm = () => {
-    setIsFormActive(true);
-    setCurrentStep(0);
-    setValues({});
-    setIsSubmitted(false);
-    setIsSending(false);
-    setSubmitError(null);
-    setFieldErrors({});
-    setLocationSuggestions([]);
-    setShowLocationSuggestions(false);
+    if (!isFormActive || isSubmitted) {
+      setCurrentStep(0);
+      setValues({});
+      setIsSubmitted(false);
+      setIsSending(false);
+      setSubmitError(null);
+      setFieldErrors({});
+      setLocationSuggestions([]);
+      setShowLocationSuggestions(false);
 
-    if (locationBlurTimeoutRef.current !== null) {
-      window.clearTimeout(locationBlurTimeoutRef.current);
-      locationBlurTimeoutRef.current = null;
+      if (locationBlurTimeoutRef.current !== null) {
+        window.clearTimeout(locationBlurTimeoutRef.current);
+        locationBlurTimeoutRef.current = null;
+      }
     }
+
+    setIsFormActive(true);
 
     setTimeout(() => {
       formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -644,6 +649,23 @@ export default function Home() {
     setTimeout(() => {
       setCurrentStep((prev) => Math.min(prev + 1, stepQuestions.length - 1));
     }, 180);
+  };
+
+  const handleInitialQuestionSelect = (optionValue: string) => {
+    setValues((prev) => ({
+      ...(isSubmitted ? {} : prev),
+      buildingType: optionValue,
+    }));
+    setFieldErrors((prev) => ({ ...prev, buildingType: null }));
+    setIsFormActive(true);
+    setIsSubmitted(false);
+    setIsSending(false);
+    setSubmitError(null);
+    setCurrentStep((prev) => (prev <= 0 ? 1 : prev));
+
+    window.setTimeout(() => {
+      formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 120);
   };
 
   useEffect(() => {
@@ -728,6 +750,7 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={handleActivateForm}
+                  data-analytics-id="cta-hero-audit"
                   className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-gradient-to-r from-red-500 via-red-400 to-red-500 px-10 py-4 text-center text-base font-semibold uppercase tracking-[0.25em] text-white shadow-[0_18px_45px_rgba(239,68,68,0.45)] transition hover:from-red-400 hover:via-red-500 hover:to-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   <span className="absolute inset-0 translate-y-[120%] bg-white/20 transition duration-500 ease-out group-hover:translate-y-[-10%]" />
@@ -740,6 +763,7 @@ export default function Home() {
                 </button>
                 <a
                   href="tel:+2250710701212"
+                  data-analytics-id="cta-hero-call"
                   className="rounded-full border border-white/20 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white"
                 >
                   Nous appeler maintenant
@@ -748,6 +772,7 @@ export default function Home() {
                   href="https://wa.me/2250710701212"
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-analytics-id="cta-hero-whatsapp"
                   className="inline-flex items-center justify-center gap-2 rounded-full border border-green-500/30 bg-green-500/20 px-8 py-3 text-center text-sm font-semibold uppercase tracking-[0.2em] text-green-100 transition hover:border-green-400 hover:text-white"
                 >
                   <svg
@@ -837,7 +862,52 @@ export default function Home() {
           className="relative overflow-hidden bg-neutral-100 py-20 scroll-mt-24"
         >
           <div className="absolute -top-16 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-red-500/10 blur-3xl" />
-          <div className="relative mx-auto flex max-w-6xl flex-col gap-12 px-6 md:flex-row">
+          <div className="relative mx-auto flex max-w-6xl flex-col gap-12 px-6">
+            <div
+              id="audit-form"
+              data-animate-on-scroll
+              style={createDelayStyle(80)}
+              className="-mt-12 rounded-3xl border border-red-500/20 bg-white px-6 py-8 text-black shadow-xl scroll-mt-36 sm:px-8 sm:py-10"
+            >
+              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Commencez ici</span>
+              <h3 className="mt-3 text-2xl font-semibold text-black">{firstQuestion.title}</h3>
+              <p className="mt-2 text-sm text-neutral-600">{firstQuestion.subtitle}</p>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                {firstQuestion.options?.map((option) => {
+                  const isSelected = values.buildingType === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleInitialQuestionSelect(option.value)}
+                      className={`flex items-center gap-3 rounded-2xl border px-4 py-4 text-left transition ${
+                        isSelected
+                          ? "border-red-500 bg-red-50 text-red-600 shadow-sm"
+                          : "border-neutral-200 bg-white text-neutral-800 hover:border-red-400 hover:bg-red-50/60"
+                      }`}
+                      aria-pressed={isSelected}
+                    >
+                      {option.icon ? (
+                        <span
+                          className={`flex h-12 w-12 items-center justify-center rounded-full ${
+                            isSelected
+                              ? "bg-red-500/15 text-red-500"
+                              : "bg-neutral-100 text-neutral-600"
+                          }`}
+                        >
+                          {option.icon}
+                        </span>
+                      ) : null}
+                      <span className="text-sm font-medium leading-tight">{option.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-5 text-xs text-neutral-500">
+                Votre sélection est reprise automatiquement dans le formulaire complet juste en dessous.
+              </p>
+            </div>
+            <div className="flex flex-col gap-12 md:flex-row">
             <div
               data-animate-on-scroll
               style={createDelayStyle(0)}
@@ -913,14 +983,14 @@ export default function Home() {
                 {!isFormActive ? (
                   <div className="mt-8 space-y-6 text-center">
                     <p className="text-sm text-neutral-600">
-                      Cliquez sur « Demander un audit gratuit » pour lancer le questionnaire interactif.
+                      Sélectionnez le type de bâtiment ci-dessus ou cliquez sur « Remplir le formulaire complet » pour continuer.
                     </p>
                     <button
                       type="button"
                       onClick={handleActivateForm}
                       className="inline-flex items-center justify-center gap-2 rounded-full bg-red-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400"
                     >
-                      Lancer le flux de questions
+                      Remplir le formulaire complet
                     </button>
                   </div>
                 ) : !isSubmitted ? (
@@ -1170,6 +1240,7 @@ export default function Home() {
                         href="https://wa.me/2250710701212"
                         target="_blank"
                         rel="noopener noreferrer"
+                        data-analytics-id="cta-success-whatsapp"
                         className="inline-flex items-center justify-center gap-2 rounded-full border border-green-500 px-6 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-green-700 transition hover:bg-green-500 hover:text-white"
                       >
                         Contacter via WhatsApp
@@ -1178,6 +1249,7 @@ export default function Home() {
                   </div>
                 )}
               </div>
+            </div>
             </div>
           </div>
         </section>
@@ -1392,12 +1464,14 @@ export default function Home() {
               <button
                 type="button"
                 onClick={handleActivateForm}
+                data-analytics-id="cta-bottom-audit"
                 className="rounded-full bg-red-500 px-10 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400"
               >
                 Demander mon devis rapide
               </button>
               <a
                 href="tel:+2250710701212"
+                data-analytics-id="cta-bottom-call"
                 className="rounded-full border border-white/20 px-10 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white"
               >
                 Parler à une experte maintenant
@@ -1406,6 +1480,7 @@ export default function Home() {
                 href="https://wa.me/2250710701212"
                 target="_blank"
                 rel="noopener noreferrer"
+                data-analytics-id="cta-bottom-whatsapp"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-green-500/30 bg-green-500/20 px-10 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-green-100 transition hover:border-green-400 hover:text-white"
               >
                 Échanger sur WhatsApp
