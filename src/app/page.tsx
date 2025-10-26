@@ -198,7 +198,7 @@ const faqStructuredData = {
 
 const pricingHighlights = [
   "Abonnement mensuel à seulement 50 000 F CFA",
-  "Frais d’installation à 100 000 F CFA incluant 2 détecteurs, 1 sirène et 1 télécommande",
+  "Frais d’installation à 100 000 F CFA incluant des détecteurs, 1 sirène et 1 télécommande",
   "Extension modulable : nous ajoutons les détecteurs requis pour chaque nouveau site",
   "Supervision 24/7 et interventions express incluses dans chaque formule",
   "Tableau de bord client pour suivre alertes et interventions en temps réel",
