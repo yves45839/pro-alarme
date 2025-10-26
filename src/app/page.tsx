@@ -294,7 +294,7 @@ const stepQuestions: StepQuestion[] = [
     id: 2,
     title: "Où se situe le site à protéger ?",
     subtitle:
-      "Commencez à saisir l’adresse ou un lieu, puis sélectionnez la proposition correspondante.",
+      "Indiquez un quartier, un carrefour ou tout repère bien connu pour situer précisément le site.",
     field: "location",
     inputType: "text",
     required: true,
@@ -954,7 +954,7 @@ export default function Home() {
                     3
                   </span>
                   <div>
-                    <h3 className="text-lg font-semibold text-black">Installation express</h3>
+                    <h3 className="text-lg font-semibold text-black">Installation planifiée sous 72 heures</h3>
                   </div>
                 </div>
               </div>
@@ -1211,11 +1211,14 @@ export default function Home() {
                         Merci ! Votre demande est enregistrée.
                       </h4>
                       <p className="mt-2 text-sm text-neutral-100">
-                        Un conseiller Pro Alarme vous rappellera sous 15 minutes au numéro indiqué pour valider votre abonnement.
+                        Un conseiller Pro Alarme vous rappellera dans les meilleurs délais au numéro indiqué pour valider votre abonnement.
                       </p>
                       <p className="mt-4 text-sm text-neutral-100">
                         Le démarrage de votre contrat demandera un règlement global de 150 000 F CFA&nbsp;:
                         100 000 F CFA de frais d’installation puis 50 000 F CFA pour le premier mois d’abonnement.
+                      </p>
+                      <p className="mt-4 text-sm text-neutral-100">
+                        L’installation est planifiée sous 72 heures après validation de votre dossier.
                       </p>
                     </div>
                     <div className="space-y-4">
