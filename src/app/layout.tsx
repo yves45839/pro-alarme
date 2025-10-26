@@ -105,6 +105,13 @@ export default function RootLayout({
               />
             </Link>
             <div className="flex items-center gap-4">
+              <a
+                href="#audit-form"
+                data-analytics-id="cta-header-audit"
+                className="hidden items-center justify-center rounded-full bg-red-500 px-5 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-red-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:inline-flex"
+              >
+                Demander un audit
+              </a>
               <DappelleCallButton />
             </div>
           </div>
