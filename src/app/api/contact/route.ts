@@ -16,6 +16,22 @@ if (missingEnvVars.length > 0) {
   );
 }
 
+const REQUIRED_WHATSAPP_ENV_VARS = [
+  "WHATSAPP_PHONE_NUMBER_ID",
+  "WHATSAPP_ACCESS_TOKEN",
+  "WHATSAPP_RECIPIENT",
+];
+
+const missingWhatsappEnvVars = REQUIRED_WHATSAPP_ENV_VARS.filter(
+  (key) => !process.env[key],
+);
+
+if (missingWhatsappEnvVars.length > 0) {
+  throw new Error(
+    `Missing required WhatsApp environment variables: ${missingWhatsappEnvVars.join(", ")}`,
+  );
+}
+
 const smtpPort = Number.parseInt(process.env.SMTP_PORT as string, 10);
 
 if (Number.isNaN(smtpPort)) {
@@ -38,6 +54,79 @@ const transporter = nodemailer.createTransport({
 
 const emailRecipient = process.env.TO_EMAIL ?? process.env.SMTP_USER;
 
+const whatsappConfig = {
+  phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID as string,
+  accessToken: process.env.WHATSAPP_ACCESS_TOKEN as string,
+  recipient: process.env.WHATSAPP_RECIPIENT as string,
+};
+
+const sanitizeString = (value: unknown) => {
+  return typeof value === "string" ? value.trim() : "";
+};
+
+type ContactPayload = {
+  buildingType?: unknown;
+  location?: unknown;
+  phone?: unknown;
+  email?: unknown;
+};
+
+type SanitizedPayload = {
+  buildingType: string;
+  location: string;
+  phone: string;
+  email?: string;
+};
+
+const sanitizeAndValidatePayload = (
+  payload: ContactPayload,
+): { data: SanitizedPayload | null; errors: string[] } => {
+  const buildingType = sanitizeString(payload.buildingType);
+  const location = sanitizeString(payload.location);
+  const phone = sanitizeString(payload.phone);
+  const email = sanitizeString(payload.email);
+
+  const errors: string[] = [];
+
+  if (buildingType.length === 0) {
+    errors.push("Le type de bâtiment est obligatoire.");
+  }
+
+  if (location.length === 0) {
+    errors.push("La localisation est obligatoire.");
+  }
+
+  if (phone.length === 0) {
+    errors.push("Le numéro de téléphone est obligatoire.");
+  } else {
+    const phoneRegex = /^\+?[0-9\s.-]{6,}$/;
+    if (!phoneRegex.test(phone)) {
+      errors.push("Le numéro de téléphone indiqué est invalide.");
+    }
+  }
+
+  if (email.length > 0) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      errors.push("L'adresse e-mail indiquée est invalide.");
+    }
+  }
+
+  if (errors.length > 0) {
+    return { data: null, errors };
+  }
+
+  return {
+    data: {
+      buildingType,
+      location,
+      phone,
+      email: email.length > 0 ? email : undefined,
+    },
+    errors,
+  };
+};
+
 const formatField = (label: string, value?: string) => {
   if (!value) {
     return `${label}: —`;
@@ -46,51 +135,88 @@ const formatField = (label: string, value?: string) => {
   return `${label}: ${value}`;
 };
 
+const sendWhatsAppMessage = async (message: string) => {
+  const response = await fetch(
+    `https://graph.facebook.com/v20.0/${whatsappConfig.phoneNumberId}/messages`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${whatsappConfig.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messaging_product: "whatsapp",
+        to: whatsappConfig.recipient,
+        type: "text",
+        text: {
+          preview_url: false,
+          body: message,
+        },
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    throw new Error(
+      `WhatsApp API error (${response.status}): ${response.statusText}${
+        errorText ? ` - ${errorText}` : ""
+      }`,
+    );
+  }
+};
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = (await request.json()) as ContactPayload;
 
-    const { siteType, siteCount, location, phone, email, notes } = body as Record<
-      string,
-      string | undefined
-    >;
+    const { data, errors } = sanitizeAndValidatePayload(body);
+
+    if (!data) {
+      return NextResponse.json(
+        {
+          error: "Les informations fournies sont invalides.",
+          details: errors,
+        },
+        { status: 400 },
+      );
+    }
 
     const textContent = [
       "Nouvelle demande reçue depuis le formulaire Pro Alarme.",
-      formatField("Type de site", siteType),
-      formatField("Nombre de sites", siteCount),
-      formatField("Localisation", location),
-      formatField("Téléphone", phone),
-      formatField("E-mail", email),
-      formatField("Notes", notes),
+      formatField("Type de bâtiment", data.buildingType),
+      formatField("Localisation", data.location),
+      formatField("Téléphone", data.phone),
+      formatField("E-mail", data.email),
     ].join("\n");
 
     const htmlContent = `
       <h2>Nouvelle demande reçue depuis le site Pro Alarme</h2>
       <p>Voici les informations transmises :</p>
       <ul>
-        <li><strong>Type de site :</strong> ${siteType || "—"}</li>
-        <li><strong>Nombre de sites :</strong> ${siteCount || "—"}</li>
-        <li><strong>Localisation :</strong> ${location || "—"}</li>
-        <li><strong>Téléphone :</strong> ${phone || "—"}</li>
-        <li><strong>E-mail :</strong> ${email || "—"}</li>
-        <li><strong>Notes :</strong> ${notes || "—"}</li>
+        <li><strong>Type de bâtiment :</strong> ${data.buildingType}</li>
+        <li><strong>Localisation :</strong> ${data.location}</li>
+        <li><strong>Téléphone :</strong> ${data.phone}</li>
+        <li><strong>E-mail :</strong> ${data.email ?? "—"}</li>
       </ul>
     `;
 
-    await transporter.sendMail({
-      from: `Pro Alarme <${process.env.SMTP_USER}>`,
-      to: emailRecipient,
-      subject: "Nouvelle demande de formulaire Pro Alarme",
-      text: textContent,
-      html: htmlContent,
-    });
+    await Promise.all([
+      transporter.sendMail({
+        from: `Pro Alarme <${process.env.SMTP_USER}>`,
+        to: emailRecipient,
+        subject: "Nouvelle demande de formulaire Pro Alarme",
+        text: textContent,
+        html: htmlContent,
+      }),
+      sendWhatsAppMessage(textContent),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Erreur lors de l'envoi de l'email", error);
+    console.error("Erreur lors de l'envoi de la demande", error);
     return NextResponse.json(
-      { error: "Impossible d'envoyer l'email actuellement." },
+      { error: "Impossible d'envoyer la demande actuellement." },
       { status: 500 },
     );
   }

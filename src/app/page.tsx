@@ -904,7 +904,7 @@ export default function Home() {
                 })}
               </div>
               <p className="mt-5 text-xs text-neutral-500">
-                Votre sélection est reprise automatiquement dans le formulaire complet juste en dessous.
+                Votre sélection est reprise automatiquement dans le formulaire rapide juste en dessous.
               </p>
             </div>
             <div className="flex flex-col gap-12 md:flex-row">
@@ -932,14 +932,14 @@ export default function Home() {
                 {!isFormActive ? (
                   <div className="mt-8 space-y-6 text-center">
                     <p className="text-sm text-neutral-600">
-                      Sélectionnez le type de bâtiment ci-dessus ou cliquez sur « Remplir le formulaire complet » pour continuer.
+                      Sélectionnez le type de bâtiment ci-dessus ou cliquez sur « Remplir notre formulaire en 20 s » pour continuer.
                     </p>
                     <button
                       type="button"
                       onClick={handleActivateForm}
                       className="inline-flex items-center justify-center gap-2 rounded-full bg-red-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400"
                     >
-                      Remplir le formulaire complet
+                      Remplir notre formulaire en 20 s
                     </button>
                   </div>
                 ) : !isSubmitted ? (
