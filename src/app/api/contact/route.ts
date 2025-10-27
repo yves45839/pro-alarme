@@ -8,27 +8,14 @@ const REQUIRED_ENV_VARS = [
   "SMTP_PASS",
 ];
 
-const REQUIRED_WHATSAPP_ENV_VARS = [
-  "WHATSAPP_PHONE_NUMBER_ID",
-  "WHATSAPP_ACCESS_TOKEN",
-  "WHATSAPP_RECIPIENT",
-];
-
 type EmailConfig = {
   transporter: Transporter;
-  recipient: string;
-};
-
-type WhatsAppConfig = {
-  phoneNumberId: string;
-  accessToken: string;
   recipient: string;
 };
 
 type ConfigResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
 let cachedEmailConfig: EmailConfig | null = null;
-let cachedWhatsAppConfig: WhatsAppConfig | null = null;
 
 const createEmailConfig = (): ConfigResult<EmailConfig> => {
   if (cachedEmailConfig) {
@@ -69,31 +56,6 @@ const createEmailConfig = (): ConfigResult<EmailConfig> => {
   cachedEmailConfig = { transporter, recipient };
 
   return { ok: true, value: cachedEmailConfig };
-};
-
-const createWhatsAppConfig = (): ConfigResult<WhatsAppConfig> => {
-  if (cachedWhatsAppConfig) {
-    return { ok: true, value: cachedWhatsAppConfig };
-  }
-
-  const missingEnvVars = REQUIRED_WHATSAPP_ENV_VARS.filter(
-    (key) => !process.env[key],
-  );
-
-  if (missingEnvVars.length > 0) {
-    return {
-      ok: false,
-      error: `Missing required WhatsApp environment variables: ${missingEnvVars.join(", ")}`,
-    };
-  }
-
-  cachedWhatsAppConfig = {
-    phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID as string,
-    accessToken: process.env.WHATSAPP_ACCESS_TOKEN as string,
-    recipient: process.env.WHATSAPP_RECIPIENT as string,
-  };
-
-  return { ok: true, value: cachedWhatsAppConfig };
 };
 
 const sanitizeString = (value: unknown) => {
@@ -171,40 +133,6 @@ const formatField = (label: string, value?: string) => {
   return `${label}: ${value}`;
 };
 
-const sendWhatsAppMessage = async (
-  message: string,
-  config: WhatsAppConfig,
-) => {
-  const response = await fetch(
-    `https://graph.facebook.com/v20.0/${config.phoneNumberId}/messages`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${config.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messaging_product: "whatsapp",
-        to: config.recipient,
-        type: "text",
-        text: {
-          preview_url: false,
-          body: message,
-        },
-      }),
-    },
-  );
-
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => "");
-    throw new Error(
-      `WhatsApp API error (${response.status}): ${response.statusText}${
-        errorText ? ` - ${errorText}` : ""
-      }`,
-    );
-  }
-};
-
 export async function POST(request: Request) {
   try {
     const emailConfigResult = createEmailConfig();
@@ -217,18 +145,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const whatsappConfigResult = createWhatsAppConfig();
-
-    if (!whatsappConfigResult.ok) {
-      console.error(whatsappConfigResult.error);
-      return NextResponse.json(
-        { error: "Configuration WhatsApp invalide." },
-        { status: 500 },
-      );
-    }
-
     const { transporter, recipient: emailRecipient } = emailConfigResult.value;
-    const whatsappConfig = whatsappConfigResult.value;
 
     const body = (await request.json()) as ContactPayload;
 
@@ -263,16 +180,13 @@ export async function POST(request: Request) {
       </ul>
     `;
 
-    await Promise.all([
-      transporter.sendMail({
-        from: `Pro Alarme <${process.env.SMTP_USER}>`,
-        to: emailRecipient,
-        subject: "Nouvelle demande de formulaire Pro Alarme",
-        text: textContent,
-        html: htmlContent,
-      }),
-      sendWhatsAppMessage(textContent, whatsappConfig),
-    ]);
+    await transporter.sendMail({
+      from: `Pro Alarme <${process.env.SMTP_USER}>`,
+      to: emailRecipient,
+      subject: "Nouvelle demande de formulaire Pro Alarme",
+      text: textContent,
+      html: htmlContent,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
