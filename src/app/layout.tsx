@@ -98,9 +98,9 @@ export default function RootLayout({
               <Image
                 src={logoProalarmeSrc}
                 alt="Logo Pro Alarme"
-                width={160}
-                height={48}
-                className="h-10 w-auto md:h-12"
+                width={220}
+                height={66}
+                className="h-12 w-auto md:h-16"
                 priority
               />
             </Link>
