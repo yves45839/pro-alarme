@@ -1213,8 +1213,8 @@ export default function Home() {
               style={createDelayStyle(0)}
               className="space-y-6"
             >
-              <h2 className="text-3xl font-semibold text-black md:text-4xl">
-                Une offre unique, calibrée pour Vous!
+              <h2 className="text-3xl font-semibold text-white md:text-4xl">
+                Une offre unique calibrée pour vous
               </h2>
               <p className="text-lg text-white">
                 Notre solution évolutive s’adapte à vos besoins : nous dimensionnons l’équipement et les détecteurs nécessaires pour protéger chaque site, puis déclenchons immédiatement les protocoles en cas d’alerte.
