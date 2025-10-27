@@ -908,67 +908,16 @@ export default function Home() {
               </p>
             </div>
             <div className="flex flex-col gap-12 md:flex-row">
-            <div
-              data-animate-on-scroll
-              style={createDelayStyle(0)}
-              className="md:w-1/2"
-            >
-              <span className="text-xs uppercase tracking-[0.3em] text-red-500">Comment ça marche</span>
-              <h2 className="mt-4 text-3xl font-semibold text-black md:text-4xl">
-                Un processus fluide pour sécuriser vos sites sans friction.
-              </h2>
-              <p className="mt-4 text-neutral-700">
-                Répondez à quelques questions, nos experts vous recontactent immédiatement pour un diagnostic personnalisé et la planification de l’installation.
-              </p>
-              <div className="mt-8 space-y-6">
+              <div
+                data-animate-on-scroll
+                style={createDelayStyle(240)}
+                className="md:w-1/2"
+              >
                 <div
-                  data-animate-on-scroll
-                  style={createDelayStyle(160)}
-                  className="flex items-start gap-4"
-                >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-lg font-semibold text-white">
-                    1
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-semibold text-black">Questions ciblées</h3>
-                  </div>
-                </div>
-                <div
-                  data-animate-on-scroll
-                  style={createDelayStyle(260)}
-                  className="flex items-start gap-4"
-                >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-lg font-semibold text-white">
-                    2
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-semibold text-black">Validation & devis</h3>
-                  </div>
-                </div>
-                <div
+                  ref={formCardRef}
                   data-animate-on-scroll
                   style={createDelayStyle(360)}
-                  className="flex items-start gap-4"
-                >
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-lg font-semibold text-white">
-                    3
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-semibold text-black">Installation planifiée sous 72 heures</h3>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              data-animate-on-scroll
-              style={createDelayStyle(240)}
-              className="md:w-1/2"
-            >
-              <div
-                ref={formCardRef}
-                data-animate-on-scroll
-                style={createDelayStyle(360)}
-                className="rounded-3xl border border-black/10 bg-white p-8 shadow-xl"
+                  className="rounded-3xl border border-black/10 bg-white p-8 shadow-xl"
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl font-semibold text-black">Demandez votre abonnement</h3>
