@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import nodemailer, { type Transporter } from "nodemailer";
 
 const REQUIRED_ENV_VARS = [
   "SMTP_HOST",
@@ -8,56 +8,92 @@ const REQUIRED_ENV_VARS = [
   "SMTP_PASS",
 ];
 
-const missingEnvVars = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
-
-if (missingEnvVars.length > 0) {
-  throw new Error(
-    `Missing required SMTP environment variables: ${missingEnvVars.join(", ")}`,
-  );
-}
-
 const REQUIRED_WHATSAPP_ENV_VARS = [
   "WHATSAPP_PHONE_NUMBER_ID",
   "WHATSAPP_ACCESS_TOKEN",
   "WHATSAPP_RECIPIENT",
 ];
 
-const missingWhatsappEnvVars = REQUIRED_WHATSAPP_ENV_VARS.filter(
-  (key) => !process.env[key],
-);
+type EmailConfig = {
+  transporter: Transporter;
+  recipient: string;
+};
 
-if (missingWhatsappEnvVars.length > 0) {
-  throw new Error(
-    `Missing required WhatsApp environment variables: ${missingWhatsappEnvVars.join(", ")}`,
+type WhatsAppConfig = {
+  phoneNumberId: string;
+  accessToken: string;
+  recipient: string;
+};
+
+type ConfigResult<T> = { ok: true; value: T } | { ok: false; error: string };
+
+let cachedEmailConfig: EmailConfig | null = null;
+let cachedWhatsAppConfig: WhatsAppConfig | null = null;
+
+const createEmailConfig = (): ConfigResult<EmailConfig> => {
+  if (cachedEmailConfig) {
+    return { ok: true, value: cachedEmailConfig };
+  }
+
+  const missingEnvVars = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+
+  if (missingEnvVars.length > 0) {
+    return {
+      ok: false,
+      error: `Missing required SMTP environment variables: ${missingEnvVars.join(", ")}`,
+    };
+  }
+
+  const smtpPort = Number.parseInt(process.env.SMTP_PORT as string, 10);
+
+  if (Number.isNaN(smtpPort)) {
+    return { ok: false, error: "SMTP_PORT must be a valid number" };
+  }
+
+  const smtpSecure = process.env.SMTP_SECURE
+    ? process.env.SMTP_SECURE.toLowerCase() === "true"
+    : smtpPort === 465;
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: smtpPort,
+    secure: smtpSecure,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const recipient = process.env.TO_EMAIL ?? (process.env.SMTP_USER as string);
+
+  cachedEmailConfig = { transporter, recipient };
+
+  return { ok: true, value: cachedEmailConfig };
+};
+
+const createWhatsAppConfig = (): ConfigResult<WhatsAppConfig> => {
+  if (cachedWhatsAppConfig) {
+    return { ok: true, value: cachedWhatsAppConfig };
+  }
+
+  const missingEnvVars = REQUIRED_WHATSAPP_ENV_VARS.filter(
+    (key) => !process.env[key],
   );
-}
 
-const smtpPort = Number.parseInt(process.env.SMTP_PORT as string, 10);
+  if (missingEnvVars.length > 0) {
+    return {
+      ok: false,
+      error: `Missing required WhatsApp environment variables: ${missingEnvVars.join(", ")}`,
+    };
+  }
 
-if (Number.isNaN(smtpPort)) {
-  throw new Error("SMTP_PORT must be a valid number");
-}
+  cachedWhatsAppConfig = {
+    phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID as string,
+    accessToken: process.env.WHATSAPP_ACCESS_TOKEN as string,
+    recipient: process.env.WHATSAPP_RECIPIENT as string,
+  };
 
-const smtpSecure = process.env.SMTP_SECURE
-  ? process.env.SMTP_SECURE.toLowerCase() === "true"
-  : smtpPort === 465;
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: smtpPort,
-  secure: smtpSecure,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
-const emailRecipient = process.env.TO_EMAIL ?? process.env.SMTP_USER;
-
-const whatsappConfig = {
-  phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID as string,
-  accessToken: process.env.WHATSAPP_ACCESS_TOKEN as string,
-  recipient: process.env.WHATSAPP_RECIPIENT as string,
+  return { ok: true, value: cachedWhatsAppConfig };
 };
 
 const sanitizeString = (value: unknown) => {
@@ -135,18 +171,21 @@ const formatField = (label: string, value?: string) => {
   return `${label}: ${value}`;
 };
 
-const sendWhatsAppMessage = async (message: string) => {
+const sendWhatsAppMessage = async (
+  message: string,
+  config: WhatsAppConfig,
+) => {
   const response = await fetch(
-    `https://graph.facebook.com/v20.0/${whatsappConfig.phoneNumberId}/messages`,
+    `https://graph.facebook.com/v20.0/${config.phoneNumberId}/messages`,
     {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${whatsappConfig.accessToken}`,
+        Authorization: `Bearer ${config.accessToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         messaging_product: "whatsapp",
-        to: whatsappConfig.recipient,
+        to: config.recipient,
         type: "text",
         text: {
           preview_url: false,
@@ -168,6 +207,29 @@ const sendWhatsAppMessage = async (message: string) => {
 
 export async function POST(request: Request) {
   try {
+    const emailConfigResult = createEmailConfig();
+
+    if (!emailConfigResult.ok) {
+      console.error(emailConfigResult.error);
+      return NextResponse.json(
+        { error: "Configuration d'envoi d'e-mails invalide." },
+        { status: 500 },
+      );
+    }
+
+    const whatsappConfigResult = createWhatsAppConfig();
+
+    if (!whatsappConfigResult.ok) {
+      console.error(whatsappConfigResult.error);
+      return NextResponse.json(
+        { error: "Configuration WhatsApp invalide." },
+        { status: 500 },
+      );
+    }
+
+    const { transporter, recipient: emailRecipient } = emailConfigResult.value;
+    const whatsappConfig = whatsappConfigResult.value;
+
     const body = (await request.json()) as ContactPayload;
 
     const { data, errors } = sanitizeAndValidatePayload(body);
@@ -209,7 +271,7 @@ export async function POST(request: Request) {
         text: textContent,
         html: htmlContent,
       }),
-      sendWhatsAppMessage(textContent),
+      sendWhatsAppMessage(textContent, whatsappConfig),
     ]);
 
     return NextResponse.json({ success: true });
