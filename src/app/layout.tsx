@@ -100,7 +100,7 @@ export default function RootLayout({
                 alt="Logo Pro Alarme"
                 width={220}
                 height={66}
-                className="h-12 w-auto md:h-16"
+                className="h-12 w-auto md:h-20 lg:h-24"
                 priority
               />
             </Link>
