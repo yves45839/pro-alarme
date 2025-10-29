@@ -219,6 +219,25 @@ const guarantees = [
 
 const GEOAPIFY_API_KEY = process.env.NEXT_PUBLIC_GEOAPIFY_API_KEY;
 
+const PHONE_COUNTRY_PREFIX = "+225" as const;
+const PHONE_FLAG = "🇨🇮" as const;
+
+const formatPhoneNumber = (phoneDigits: string) => {
+  const digits = phoneDigits.replace(/\D/g, "");
+
+  if (digits.length === 0) {
+    return "";
+  }
+
+  const groups: string[] = [];
+
+  for (let index = 0; index < digits.length; index += 2) {
+    groups.push(digits.slice(index, index + 2));
+  }
+
+  return `${PHONE_COUNTRY_PREFIX} ${groups.join(" ")}`.trim();
+};
+
 type GeoapifyFeatureProperties = {
   formatted?: string;
 };
@@ -325,7 +344,7 @@ const stepQuestions: StepQuestion[] = [
     field: "phone",
     inputType: "tel",
     required: true,
-    placeholder: "Ex. +225 07 10 70 12 12",
+    placeholder: "07 10 70 12 12",
   },
   {
     id: 5,
@@ -376,10 +395,10 @@ export default function Home() {
     }
 
     if (!errorMessage && question.field === "phone" && value.length > 0) {
-      const normalizedPhone = value.replace(/[\s.-]/g, "");
-      const phoneRegex = /^\+225\d{6,}$/;
-      if (!phoneRegex.test(normalizedPhone)) {
-        errorMessage = "Veuillez indiquer un numéro valide au format +225 suivi d'au moins 6 chiffres.";
+      const digitsOnly = value.replace(/\D/g, "");
+
+      if (digitsOnly.length !== 10) {
+        errorMessage = "Veuillez indiquer un numéro ivoirien valide de 10 chiffres.";
       }
     }
 
@@ -536,20 +555,36 @@ export default function Home() {
     return Math.round(((currentStep + 1) / totalSteps) * 100);
   }, [currentStep, totalSteps]);
 
-  const liveSummary = useMemo(
-    () =>
-      visibleStepQuestions
-        .filter((question) => {
-          const value = values[question.field];
-          return typeof value === "string" && value.trim().length > 0;
-        })
-        .map((question) => ({
+  const liveSummary = useMemo(() => {
+    return visibleStepQuestions
+      .map((question) => {
+        const rawValue = values[question.field];
+
+        if (typeof rawValue !== "string" || rawValue.trim().length === 0) {
+          return null;
+        }
+
+        const formattedValue =
+          question.field === "phone"
+            ? formatPhoneNumber(rawValue)
+            : rawValue;
+
+        if (formattedValue.trim().length === 0) {
+          return null;
+        }
+
+        return {
           id: question.id,
           label: question.title,
-          value: values[question.field] as string,
-        })),
-    [values, visibleStepQuestions]
-  );
+          value: formattedValue,
+        };
+      })
+      .filter(
+        (
+          item
+        ): item is { id: number; label: string; value: string } => item !== null
+      );
+  }, [values, visibleStepQuestions]);
 
   const handleNext = () => {
     if (currentStep < totalSteps - 1) {
@@ -582,6 +617,11 @@ export default function Home() {
 
       return next;
     });
+  };
+
+  const handlePhoneInputChange = (rawValue: string) => {
+    const digitsOnly = rawValue.replace(/\D/g, "").slice(0, 10);
+    handleChange("phone", digitsOnly);
   };
 
   const handleLocationFocus = () => {
@@ -667,7 +707,12 @@ export default function Home() {
           key,
           typeof value === "string" ? value.trim() : value,
         ])
-      );
+      ) as Record<string, unknown>;
+
+      if (typeof payload.phone === "string" && payload.phone.length > 0) {
+        const digitsOnly = payload.phone.replace(/\D/g, "").slice(0, 10);
+        payload.phone = `${PHONE_COUNTRY_PREFIX}${digitsOnly}`;
+      }
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
@@ -746,13 +791,18 @@ export default function Home() {
   }, [currentStep, isFormActive, isSubmitted]);
 
   const summary = useMemo(() => {
+    const formattedPhone =
+      typeof values.phone === "string" && values.phone.trim().length > 0
+        ? formatPhoneNumber(values.phone)
+        : "";
+
     return [
-      { label: "Type de bâtiment", value: values.buildingType },
-      { label: "Nom de l'entreprise", value: values.companyName },
-      { label: "Lieu à sécuriser", value: values.location },
-      { label: "Téléphone", value: values.phone },
-      { label: "E-mail", value: values.email },
-    ].filter((item) => item.value && item.value.trim().length > 0);
+      { label: "Type de bâtiment", value: values.buildingType ?? "" },
+      { label: "Nom de l'entreprise", value: values.companyName ?? "" },
+      { label: "Lieu à sécuriser", value: values.location ?? "" },
+      { label: "Téléphone", value: formattedPhone },
+      { label: "E-mail", value: values.email ?? "" },
+    ].filter((item) => item.value.trim().length > 0);
   }, [values]);
 
   const activeError = fieldErrors[activeQuestion.field] ?? null;
@@ -1161,16 +1211,43 @@ export default function Home() {
                       )}
 
                       {!activeQuestion.options && activeQuestion.inputType === "tel" && (
-                        <input
-                          type="tel"
-                          value={values[activeQuestion.field] ?? ""}
-                          onChange={(event) => handleChange(activeQuestion.field, event.target.value)}
-                          className={`w-full rounded-2xl border px-4 py-3 text-sm text-neutral-800 focus:outline-none ${
-                            activeError ? "border-red-500" : "border-neutral-200 focus:border-red-500"
+                        <div
+                          className={`flex w-full items-center rounded-2xl border bg-white ${
+                            activeError
+                              ? "border-red-500"
+                              : "border-neutral-200 focus-within:border-red-500"
                           }`}
-                          placeholder={activeQuestion.placeholder}
-                          aria-invalid={Boolean(activeError)}
-                        />
+                        >
+                          <div
+                            className={`flex items-center gap-2 border-r px-4 py-3 text-sm ${
+                              activeError
+                                ? "border-red-200 text-red-600"
+                                : "border-neutral-200 text-neutral-600"
+                            }`}
+                          >
+                            <span
+                              role="img"
+                              aria-label="Drapeau de la Côte d’Ivoire"
+                              className="text-base"
+                            >
+                              {PHONE_FLAG}
+                            </span>
+                            <span className="font-medium text-neutral-700">
+                              {PHONE_COUNTRY_PREFIX}
+                            </span>
+                          </div>
+                          <input
+                            type="tel"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            maxLength={10}
+                            value={(values[activeQuestion.field] as string | undefined) ?? ""}
+                            onChange={(event) => handlePhoneInputChange(event.target.value)}
+                            className="flex-1 border-0 bg-transparent px-4 py-3 text-sm text-neutral-800 placeholder:text-neutral-400 focus:outline-none"
+                            placeholder={activeQuestion.placeholder}
+                            aria-invalid={Boolean(activeError)}
+                          />
+                        </div>
                       )}
 
                         {!activeQuestion.options && activeQuestion.inputType === "email" && (
