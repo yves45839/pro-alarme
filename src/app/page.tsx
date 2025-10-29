@@ -376,9 +376,10 @@ export default function Home() {
     }
 
     if (!errorMessage && question.field === "phone" && value.length > 0) {
-      const phoneRegex = /^\+?[0-9\s.-]{6,}$/;
-      if (!phoneRegex.test(value)) {
-        errorMessage = "Veuillez indiquer un numéro valide.";
+      const normalizedPhone = value.replace(/[\s.-]/g, "");
+      const phoneRegex = /^\+225\d{6,}$/;
+      if (!phoneRegex.test(normalizedPhone)) {
+        errorMessage = "Veuillez indiquer un numéro valide au format +225 suivi d'au moins 6 chiffres.";
       }
     }
 
@@ -997,14 +998,14 @@ export default function Home() {
                 {!isFormActive ? (
                   <div className="mt-8 space-y-6 text-center">
                     <p className="text-sm text-neutral-600">
-                      Sélectionnez le type de bâtiment ci-dessus ou cliquez sur « Remplir le formulaire complet » pour continuer.
+                      Sélectionnez le type de bâtiment ci-dessus ou cliquez sur « Remplir le formulaire en 20 s » pour continuer.
                     </p>
                     <button
                       type="button"
                       onClick={handleActivateForm}
                       className="inline-flex items-center justify-center gap-2 rounded-full bg-red-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400"
                     >
-                      Remplir le formulaire complet
+                      Remplir le formulaire en 20 s
                     </button>
                   </div>
                 ) : !isSubmitted ? (
@@ -1278,7 +1279,7 @@ export default function Home() {
               style={createDelayStyle(0)}
               className="space-y-6"
             >
-              <h2 className="text-3xl font-semibold text-black md:text-4xl">
+              <h2 className="text-3xl font-semibold text-white md:text-4xl">
                 Une offre unique, calibrée pour Vous!
               </h2>
               <p className="text-lg text-white">
