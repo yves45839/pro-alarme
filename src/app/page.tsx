@@ -233,6 +233,7 @@ type GeoapifyAutocompleteResponse = {
 
 type StepValues = {
   buildingType?: string;
+  companyName?: string;
   location?: string;
   phone?: string;
   email?: string;
@@ -257,6 +258,7 @@ type StepQuestion = {
   options?: StepOption[];
   required?: boolean;
   placeholder?: string;
+  shouldDisplay?: (values: StepValues) => boolean;
 };
 
 const stepQuestions: StepQuestion[] = [
@@ -292,6 +294,22 @@ const stepQuestions: StepQuestion[] = [
   },
   {
     id: 2,
+    title: "Quel est le nom de votre entreprise ?",
+    subtitle:
+      "Indiquez le nom à faire figurer sur vos factures si vous représentez une société.",
+    field: "companyName",
+    inputType: "text",
+    placeholder: "Ex. Société Ivoirienne de Sécurité",
+    shouldDisplay: (values) => {
+      if (!values.buildingType) {
+        return false;
+      }
+
+      return values.buildingType !== "Résidentiel";
+    },
+  },
+  {
+    id: 3,
     title: "Où se situe le site à protéger ?",
     subtitle:
       "Indiquez un quartier, un carrefour ou tout repère bien connu pour situer précisément le site.",
@@ -301,7 +319,7 @@ const stepQuestions: StepQuestion[] = [
     placeholder: "Ex. Plateau, Abidjan",
   },
   {
-    id: 3,
+    id: 4,
     title: "Quel est votre numéro de téléphone ?",
     subtitle: "Un expert vous appellera rapidement pour finaliser votre audit.",
     field: "phone",
@@ -310,11 +328,13 @@ const stepQuestions: StepQuestion[] = [
     placeholder: "Ex. +225 07 10 70 12 12",
   },
   {
-    id: 4,
+    id: 5,
     title: "Quelle adresse e-mail pouvons-nous utiliser ?",
-    subtitle: "L’e-mail est facultatif : il sert pour les devis et suivis écrits.",
+    subtitle:
+      "L’e-mail est requis pour vous envoyer vos factures et les suivis d’intervention.",
     field: "email",
     inputType: "email",
+    required: true,
     placeholder: "nom@entreprise.ci",
   },
 ];
@@ -408,9 +428,21 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  const visibleStepQuestions = useMemo(() => {
+    return stepQuestions.filter((question) =>
+      question.shouldDisplay ? question.shouldDisplay(values) : true
+    );
+  }, [values]);
+
+  const totalSteps = visibleStepQuestions.length || 1;
+
+  useEffect(() => {
+    setCurrentStep((prev) => Math.min(prev, totalSteps - 1));
+  }, [totalSteps]);
+
   const activeQuestion: StepQuestion = useMemo(
-    () => stepQuestions[Math.min(currentStep, stepQuestions.length - 1)],
-    [currentStep]
+    () => visibleStepQuestions[Math.min(currentStep, totalSteps - 1)],
+    [currentStep, totalSteps, visibleStepQuestions]
   );
 
   const firstQuestion = stepQuestions[0];
@@ -499,14 +531,13 @@ export default function Home() {
     };
   }, []);
 
-  const progressPercentage = useMemo(
-    () => Math.round(((currentStep + 1) / stepQuestions.length) * 100),
-    [currentStep]
-  );
+  const progressPercentage = useMemo(() => {
+    return Math.round(((currentStep + 1) / totalSteps) * 100);
+  }, [currentStep, totalSteps]);
 
   const liveSummary = useMemo(
     () =>
-      stepQuestions
+      visibleStepQuestions
         .filter((question) => {
           const value = values[question.field];
           return typeof value === "string" && value.trim().length > 0;
@@ -516,12 +547,12 @@ export default function Home() {
           label: question.title,
           value: values[question.field] as string,
         })),
-    [values]
+    [values, visibleStepQuestions]
   );
 
   const handleNext = () => {
-    if (currentStep < stepQuestions.length - 1) {
-      setCurrentStep((prev) => prev + 1);
+    if (currentStep < totalSteps - 1) {
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps - 1));
     } else {
       setIsSubmitted(true);
     }
@@ -532,8 +563,24 @@ export default function Home() {
   };
 
   const handleChange = (field: keyof StepValues, value: string) => {
-    setValues((prev) => ({ ...prev, [field]: value }));
-    setFieldErrors((prev) => ({ ...prev, [field]: null }));
+    setValues((prev) => {
+      const next: StepValues = { ...prev, [field]: value };
+
+      if (field === "buildingType" && value === "Résidentiel") {
+        delete next.companyName;
+      }
+
+      return next;
+    });
+    setFieldErrors((prev) => {
+      const next = { ...prev, [field]: null };
+
+      if (field === "buildingType" && value === "Résidentiel") {
+        next.companyName = null;
+      }
+
+      return next;
+    });
   };
 
   const handleLocationFocus = () => {
@@ -601,7 +648,7 @@ export default function Home() {
       return;
     }
 
-    if (currentStep < stepQuestions.length - 1) {
+    if (currentStep < totalSteps - 1) {
       handleNext();
       return;
     }
@@ -647,21 +694,38 @@ export default function Home() {
     const field = activeQuestion.field;
     handleChange(field, optionValue);
     setTimeout(() => {
-      setCurrentStep((prev) => Math.min(prev + 1, stepQuestions.length - 1));
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps - 1));
     }, 180);
   };
 
   const handleInitialQuestionSelect = (optionValue: string) => {
-    setValues((prev) => ({
-      ...(isSubmitted ? {} : prev),
-      buildingType: optionValue,
-    }));
-    setFieldErrors((prev) => ({ ...prev, buildingType: null }));
+    setValues((prev) => {
+      const base = isSubmitted ? {} : prev;
+      const next: StepValues = {
+        ...base,
+        buildingType: optionValue,
+      };
+
+      if (optionValue === "Résidentiel") {
+        delete next.companyName;
+      }
+
+      return next;
+    });
+    setFieldErrors((prev) => {
+      if (optionValue === "Résidentiel") {
+        return { ...prev, buildingType: null, companyName: null };
+      }
+
+      return { ...prev, buildingType: null };
+    });
     setIsFormActive(true);
     setIsSubmitted(false);
     setIsSending(false);
     setSubmitError(null);
-    setCurrentStep((prev) => (prev <= 0 ? 1 : prev));
+    setCurrentStep((prev) =>
+      prev <= 0 ? Math.min(1, totalSteps - 1) : prev
+    );
 
     window.setTimeout(() => {
       formCardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -683,6 +747,7 @@ export default function Home() {
   const summary = useMemo(() => {
     return [
       { label: "Type de bâtiment", value: values.buildingType },
+      { label: "Nom de l'entreprise", value: values.companyName },
       { label: "Lieu à sécuriser", value: values.location },
       { label: "Téléphone", value: values.phone },
       { label: "E-mail", value: values.email },
@@ -947,7 +1012,7 @@ export default function Home() {
                     <div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs uppercase tracking-[0.3em] text-red-500">
-                          Etape {currentStep + 1} / {stepQuestions.length}
+                          Etape {currentStep + 1} / {totalSteps}
                         </span>
                         <button
                           type="button"
@@ -1130,7 +1195,7 @@ export default function Home() {
                       disabled={isSending}
                       className="flex w-full items-center justify-center gap-2 rounded-full bg-red-500 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-70"
                     >
-                      {currentStep === stepQuestions.length - 1
+                      {currentStep === totalSteps - 1
                         ? isSending
                           ? "Envoi..."
                           : "Envoyer ma demande"
