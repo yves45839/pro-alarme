@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum ProspectStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  DISQUALIFIED
+  CUSTOMER
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+}
+
+enum DeviceStatus {
+  PENDING_INSTALLATION
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+  RETIRED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+model Prospect {
+  id           String         @id @default(cuid())
+  phoneNumber  String         @unique
+  email        String?
+  firstName    String?
+  lastName     String?
+  status       ProspectStatus @default(NEW)
+  source       String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  customer     Customer?      @relation("ProspectCustomer")
+  messages     MessageLog[]   @relation("ProspectMessages")
+}
+
+model Customer {
+  id                   String           @id @default(cuid())
+  phoneNumber          String           @unique
+  email                String?
+  firstName            String?
+  lastName             String?
+  joinedAt             DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  prospectPhoneNumber  String?          @unique
+  prospect             Prospect?        @relation("ProspectCustomer", fields: [prospectPhoneNumber], references: [phoneNumber])
+  subscriptions        Subscription[]
+  alarmDevices         AlarmDevice[]
+  messages             MessageLog[]     @relation("CustomerMessages")
+}
+
+model Subscription {
+  id             String              @id @default(cuid())
+  customerId     String
+  planName       String
+  status         SubscriptionStatus  @default(ACTIVE)
+  startDate      DateTime            @default(now())
+  renewalDate    DateTime
+  endsAt         DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  customer       Customer            @relation(fields: [customerId], references: [id])
+
+  @@index([customerId], map: "subscription_customer_idx")
+  @@index([status], map: "subscription_status_idx")
+}
+
+model AlarmDevice {
+  id             String       @id @default(cuid())
+  customerId     String
+  serialNumber   String       @unique
+  model          String?
+  status         DeviceStatus @default(PENDING_INSTALLATION)
+  installedAt    DateTime?
+  lastServiceAt  DateTime?
+  notes          String?
+
+  customer       Customer     @relation(fields: [customerId], references: [id])
+
+  @@index([customerId], map: "device_customer_idx")
+  @@index([status], map: "device_status_idx")
+}
+
+model MessageLog {
+  id                    String            @id @default(cuid())
+  phoneNumber           String
+  direction             MessageDirection
+  channel               String
+  content               String
+  status                String
+  sentAt                DateTime          @default(now())
+  acknowledgedAt        DateTime?
+  metadata              Json?
+  customerPhoneNumber   String?
+  prospectPhoneNumber   String?
+
+  customer              Customer?         @relation("CustomerMessages", fields: [customerPhoneNumber], references: [phoneNumber])
+  prospect              Prospect?         @relation("ProspectMessages", fields: [prospectPhoneNumber], references: [phoneNumber])
+
+  @@index([phoneNumber], map: "message_phone_idx")
+  @@index([customerPhoneNumber], map: "message_customer_phone_idx")
+  @@index([prospectPhoneNumber], map: "message_prospect_phone_idx")
+}
