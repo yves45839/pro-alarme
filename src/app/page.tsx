@@ -1619,7 +1619,7 @@ export default function Home() {
           </div>
         </div>
         <p className="mt-8 text-center text-xs text-neutral-500">
-          ProAlarme un Produit SECUNOLOGIE &amp; NFK Sécurité
+          ProAlarme un Produit SECUNOLOGIE
         </p>
       </footer>
     </div>
