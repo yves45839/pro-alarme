@@ -49,3 +49,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 4. Lancez le déploiement. À la fin du processus, Vercel fournira une URL de préproduction ainsi qu'un domaine de production configurable.
 
 > Grâce à la commande `npm run build` (désormais sans l'option expérimentale `--turbopack`), la compilation utilise la configuration supportée par Vercel, ce qui garantit la réussite du déploiement.
+
+## Documentation technique
+
+Les instructions complètes pour configurer Prisma, initialiser la base de données et lancer les migrations se trouvent dans le fichier [`README-technique.md`](./README-technique.md).
