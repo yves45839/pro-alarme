@@ -6,21 +6,28 @@ const globalForPrisma = globalThis as unknown as {
 
 const databaseUrl = process.env.DATABASE_URL;
 
-if (!databaseUrl) {
-  throw new Error('DATABASE_URL is not defined. Set it in your .env.local file.');
-}
-
-export const prisma =
-  globalForPrisma.prisma ??
+const createPrismaClient = (url: string) =>
   new PrismaClient({
     datasources: {
       db: {
-        url: databaseUrl,
+        url,
       },
     },
   });
 
-if (process.env.NODE_ENV !== 'production') {
+const prisma =
+  globalForPrisma.prisma ??
+  (databaseUrl
+    ? createPrismaClient(databaseUrl)
+    : new Proxy({} as PrismaClient, {
+        get() {
+          throw new Error(
+            'DATABASE_URL is not defined. Set it in your environment before using the database client.',
+          );
+        },
+      }));
+
+if (databaseUrl && process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
 
