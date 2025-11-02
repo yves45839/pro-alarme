@@ -6,7 +6,7 @@ import {
   ProspectStatus,
   SubscriptionStatus,
   MessageDirection,
-  MessageCategory,
+  $Enums,
 } from '@prisma/client';
 import prisma from '@/lib/db';
 import { initiatePawaPayDeposit } from '@/services/payments';
@@ -350,7 +350,7 @@ export async function sendCustomMessageAction(
       data: {
         phoneNumber,
         direction: MessageDirection.OUTBOUND,
-        category: MessageCategory.CUSTOM,
+        category: $Enums.MessageCategory.CUSTOM,
         channel: 'SMS',
         content,
         status: 'QUEUED',
