@@ -57,27 +57,31 @@ export async function createProspectAction(
 
     const convertedAt = status === PROSPECT_STATUS_CONVERTED ? new Date() : undefined;
 
+    const updateData: Prisma.ProspectUpdateInput = {
+      fullName,
+      email,
+      location,
+      source,
+      notes,
+      status,
+      convertedAt,
+    };
+
+    const createData: Prisma.ProspectCreateInput = {
+      phoneNumber,
+      fullName,
+      email,
+      location,
+      source,
+      notes,
+      status,
+      convertedAt,
+    };
+
     await prisma.prospect.upsert({
       where: { phoneNumber },
-      update: {
-        fullName,
-        email,
-        location,
-        source,
-        notes,
-        status,
-        convertedAt,
-      },
-      create: {
-        phoneNumber,
-        fullName,
-        email,
-        location,
-        source,
-        notes,
-        status,
-        convertedAt,
-      },
+      update: updateData,
+      create: createData,
     });
 
     revalidatePath('/dashboard');

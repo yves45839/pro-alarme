@@ -42,6 +42,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Référence client manquante' }, { status: 400 });
   }
 
+  if (!process.env.DATABASE_URL) {
+    console.error('PawaPay callback: DATABASE_URL manquant');
+    return NextResponse.json(
+      { error: 'Service de base de données indisponible' },
+      { status: 503 },
+    );
+  }
+
   const transaction = await prisma.paymentTransaction.findUnique({
     where: { customerReference },
   });
