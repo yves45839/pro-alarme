@@ -23,16 +23,20 @@ export function getPawaPayConfig() {
   const baseUrl = process.env.PAWAPAY_BASE_URL ?? DEFAULT_BASE_URL;
   const username = process.env.PAWAPAY_API_USERNAME;
   const password = process.env.PAWAPAY_API_PASSWORD;
+  const bearerToken = process.env.PAWAPAY_API_TOKEN;
   const defaultCurrency = process.env.PAWAPAY_DEFAULT_CURRENCY ?? DEFAULT_CURRENCY;
 
-  if (!username || !password) {
-    throw new Error('PawaPay API credentials missing. Set PAWAPAY_API_USERNAME and PAWAPAY_API_PASSWORD.');
+  if (!bearerToken && (!username || !password)) {
+    throw new Error(
+      'PawaPay API credentials missing. Set PAWAPAY_API_TOKEN or the PAWAPAY_API_USERNAME/PAWAPAY_API_PASSWORD pair.',
+    );
   }
 
   return {
     baseUrl,
     username,
     password,
+    bearerToken,
     defaultCurrency,
   };
 }
@@ -63,12 +67,14 @@ export async function createPawaPayDeposit(params: DepositParams): Promise<PawaP
     description: params.description ?? 'Pro Alarme subscription payment',
   };
 
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    Authorization: buildAuthorizationHeader(config),
+  };
+
   const response = await fetch(`${config.baseUrl.replace(/\/$/, '')}/v1/deposits`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Basic ${Buffer.from(`${config.username}:${config.password}`).toString('base64')}`,
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
@@ -97,4 +103,16 @@ export function verifyPawaPaySignature(rawBody: string, signatureHeader: string 
 
 export function normalizeMsisdn(value: string): string {
   return value.replace(/[^\d+]/g, '');
+}
+
+function buildAuthorizationHeader(config: ReturnType<typeof getPawaPayConfig>): string {
+  if (config.bearerToken) {
+    return `Bearer ${config.bearerToken}`;
+  }
+
+  if (config.username && config.password) {
+    return `Basic ${Buffer.from(`${config.username}:${config.password}`).toString('base64')}`;
+  }
+
+  throw new Error('Aucun identifiant pawaPay disponible. Vérifiez vos variables d’environnement.');
 }

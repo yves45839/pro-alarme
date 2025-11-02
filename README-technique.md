@@ -15,8 +15,10 @@
    SMTP_USER="no-reply@proalarme.ci"
    SMTP_PASS="mot_de_passe"
    PAWAPAY_BASE_URL="https://api.sandbox.pawapay.cloud"
-   PAWAPAY_API_USERNAME="votre_compte_api"
-   PAWAPAY_API_PASSWORD="token_secret"
+   # Authentification : fournissez soit un token, soit un duo username/password.
+   PAWAPAY_API_TOKEN="token_api"
+   PAWAPAY_API_USERNAME=""
+   PAWAPAY_API_PASSWORD=""
    PAWAPAY_CALLBACK_SECRET="signature_fourni_par_pawapay"
    PAWAPAY_DEFAULT_CURRENCY="XOF"
    ```
@@ -80,7 +82,9 @@ Les points d’intégration SMS devront utiliser les API opérateur (ex. Orange 
 1. **Configurer les callbacks**  
    Déclarez `https://<votre-domaine>/api/pawapay/callback` (ou l’URL fournie par votre tunnel ngrok/cloudflared en local) dans le dashboard pawaPay pour les dépôts, payouts et refunds. Les notifications porteront l’en-tête `X-PawaPay-Signature`.
 2. **Clés API & secrets**  
-   Générez un couple identifiant/mot de passe API et renseignez `PAWAPAY_API_USERNAME` / `PAWAPAY_API_PASSWORD`. Le secret de signature communiqué par pawaPay doit être stocké dans `PAWAPAY_CALLBACK_SECRET`.
+   - Si vous utilisez un **API token** (`Bearer`), renseignez `PAWAPAY_API_TOKEN` uniquement.  
+   - Si vous préférez l’authentification **Basic**, renseignez `PAWAPAY_API_USERNAME` et `PAWAPAY_API_PASSWORD`.  
+   Dans tous les cas, stockez la clé de signature fournie par pawaPay dans `PAWAPAY_CALLBACK_SECRET`.
 3. **Création d’un paiement**  
    Depuis le tableau de bord (`/dashboard`), le formulaire « Initier un paiement (pawaPay) » crée une entrée `PaymentTransaction` et appelle `POST /v1/deposits` côté pawaPay. La réponse renvoie une référence client à partager avec l’abonné.
 4. **Réception des callbacks**  
