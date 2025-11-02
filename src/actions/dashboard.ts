@@ -11,6 +11,8 @@ import {
 import prisma from '@/lib/db';
 import { initiatePawaPayDeposit } from '@/services/payments';
 
+const PROSPECT_STATUS_CONVERTED = 'CONVERTED' as ProspectStatus;
+
 export type ActionState =
   | { status: 'idle' }
   | { status: 'success'; message: string }
@@ -53,7 +55,7 @@ export async function createProspectAction(
       ? (statusInput as ProspectStatus)
       : ProspectStatus.NEW;
 
-    const convertedAt = status === ProspectStatus.CONVERTED ? new Date() : undefined;
+    const convertedAt = status === PROSPECT_STATUS_CONVERTED ? new Date() : undefined;
 
     await prisma.prospect.upsert({
       where: { phoneNumber },
@@ -130,7 +132,7 @@ export async function createCustomerAction(
       .update({
         where: { phoneNumber },
         data: {
-          status: ProspectStatus.CONVERTED,
+          status: PROSPECT_STATUS_CONVERTED,
           convertedAt: new Date(),
           customerPhoneNumber: phoneNumber,
         },
