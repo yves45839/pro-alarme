@@ -8,35 +8,56 @@ const REQUIRED_ENV_VARS = [
   "SMTP_PASS",
 ];
 
-const missingEnvVars = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+let cachedTransporter: nodemailer.Transporter | null = null;
+let transporterInitError: Error | null = null;
 
-if (missingEnvVars.length > 0) {
-  throw new Error(
-    `Missing required SMTP environment variables: ${missingEnvVars.join(", ")}`,
-  );
-}
+const initializeTransporter = () => {
+  if (cachedTransporter || transporterInitError) {
+    return {
+      transporter: cachedTransporter,
+      error: transporterInitError,
+      recipient: cachedTransporter ? process.env.TO_EMAIL ?? process.env.SMTP_USER : undefined,
+    } as const;
+  }
 
-const smtpPort = Number.parseInt(process.env.SMTP_PORT as string, 10);
+  const missingEnvVars = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
 
-if (Number.isNaN(smtpPort)) {
-  throw new Error("SMTP_PORT must be a valid number");
-}
+  if (missingEnvVars.length > 0) {
+    transporterInitError = new Error(
+      `Missing required SMTP environment variables: ${missingEnvVars.join(", ")}`,
+    );
 
-const smtpSecure = process.env.SMTP_SECURE
-  ? process.env.SMTP_SECURE.toLowerCase() === "true"
-  : smtpPort === 465;
+    return { transporter: null, error: transporterInitError, recipient: undefined } as const;
+  }
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: smtpPort,
-  secure: smtpSecure,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+  const smtpPort = Number.parseInt(process.env.SMTP_PORT as string, 10);
 
-const emailRecipient = process.env.TO_EMAIL ?? process.env.SMTP_USER;
+  if (Number.isNaN(smtpPort)) {
+    transporterInitError = new Error("SMTP_PORT must be a valid number");
+
+    return { transporter: null, error: transporterInitError, recipient: undefined } as const;
+  }
+
+  const smtpSecure = process.env.SMTP_SECURE
+    ? process.env.SMTP_SECURE.toLowerCase() === "true"
+    : smtpPort === 465;
+
+  cachedTransporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: smtpPort,
+    secure: smtpSecure,
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  return {
+    transporter: cachedTransporter,
+    error: null,
+    recipient: process.env.TO_EMAIL ?? process.env.SMTP_USER,
+  } as const;
+};
 
 const formatField = (label: string, value?: string) => {
   if (!value) {
@@ -47,6 +68,16 @@ const formatField = (label: string, value?: string) => {
 };
 
 export async function POST(request: Request) {
+  const { transporter, error, recipient } = initializeTransporter();
+
+  if (!transporter || !recipient) {
+    console.error("SMTP configuration error", error);
+    return NextResponse.json(
+      { error: "Le service d'envoi d'e-mails est momentanément indisponible." },
+      { status: 503 },
+    );
+  }
+
   try {
     const body = await request.json();
 
@@ -80,7 +111,7 @@ export async function POST(request: Request) {
 
     await transporter.sendMail({
       from: `Pro Alarme <${process.env.SMTP_USER}>`,
-      to: emailRecipient,
+      to: recipient,
       subject: "Nouvelle demande de formulaire Pro Alarme",
       text: textContent,
       html: htmlContent,
