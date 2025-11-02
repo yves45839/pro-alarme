@@ -80,6 +80,8 @@ import {
 import prisma from '@/lib/db';
 import { initiatePawaPayDeposit } from '@/services/payments';
 
+const PROSPECT_STATUS_CONVERTED = 'CONVERTED' as ProspectStatus;
+
 const mockedRevalidatePath = revalidatePath as unknown as MockedFn;
 const prismaMock = prisma as unknown as PrismaMock;
 const initiateDepositMock = initiatePawaPayDeposit as unknown as MockedFn;
@@ -123,7 +125,7 @@ describe('createProspectAction', () => {
       expect.objectContaining({
         where: { phoneNumber: '0700000000' },
         create: expect.objectContaining({
-          status: ProspectStatus.CONVERTED,
+          status: PROSPECT_STATUS_CONVERTED,
           convertedAt: expect.any(Date),
         }),
         update: expect.objectContaining({
@@ -178,7 +180,7 @@ describe('createCustomerAction', () => {
       expect.objectContaining({
         where: { phoneNumber: '0700000000' },
         data: expect.objectContaining({
-          status: ProspectStatus.CONVERTED,
+          status: PROSPECT_STATUS_CONVERTED,
           convertedAt: expect.any(Date),
         }),
       }),
