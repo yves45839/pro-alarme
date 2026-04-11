@@ -7,6 +7,12 @@ const REQUIRED_ENV_VARS = [
   "SMTP_USER",
   "SMTP_PASS",
 ];
+const DEFAULT_RECIPIENTS = [
+  "contact@proalarme.ci",
+  "anderson@label-ci.com",
+  "joseph@label-ci.com",
+  "roland@label-ci.com",
+];
 
 let cachedTransporter: nodemailer.Transporter | null = null;
 let transporterInitError: Error | null = null;
@@ -16,7 +22,6 @@ const initializeTransporter = () => {
     return {
       transporter: cachedTransporter,
       error: transporterInitError,
-      recipient: cachedTransporter ? process.env.TO_EMAIL ?? process.env.SMTP_USER : undefined,
     } as const;
   }
 
@@ -27,7 +32,7 @@ const initializeTransporter = () => {
       `Missing required SMTP environment variables: ${missingEnvVars.join(", ")}`,
     );
 
-    return { transporter: null, error: transporterInitError, recipient: undefined } as const;
+    return { transporter: null, error: transporterInitError } as const;
   }
 
   const smtpPort = Number.parseInt(process.env.SMTP_PORT as string, 10);
@@ -35,7 +40,7 @@ const initializeTransporter = () => {
   if (Number.isNaN(smtpPort)) {
     transporterInitError = new Error("SMTP_PORT must be a valid number");
 
-    return { transporter: null, error: transporterInitError, recipient: undefined } as const;
+    return { transporter: null, error: transporterInitError } as const;
   }
 
   const smtpSecure = process.env.SMTP_SECURE
@@ -55,7 +60,6 @@ const initializeTransporter = () => {
   return {
     transporter: cachedTransporter,
     error: null,
-    recipient: process.env.TO_EMAIL ?? process.env.SMTP_USER,
   } as const;
 };
 
@@ -67,10 +71,19 @@ const formatField = (label: string, value?: string) => {
   return `${label}: ${value}`;
 };
 
-export async function POST(request: Request) {
-  const { transporter, error, recipient } = initializeTransporter();
+const getRecipients = () => {
+  const envRecipients = process.env.TO_EMAIL?.split(",")
+    .map((recipient) => recipient.trim())
+    .filter(Boolean);
 
-  if (!transporter || !recipient) {
+  return [...new Set([...(envRecipients ?? []), ...DEFAULT_RECIPIENTS])];
+};
+
+export async function POST(request: Request) {
+  const { transporter, error } = initializeTransporter();
+  const recipients = getRecipients();
+
+  if (!transporter || recipients.length === 0) {
     console.error("SMTP configuration error", error);
     return NextResponse.json(
       { error: "Le service d'envoi d'e-mails est momentanément indisponible." },
@@ -111,7 +124,7 @@ export async function POST(request: Request) {
 
     await transporter.sendMail({
       from: `Pro Alarme <${process.env.SMTP_USER}>`,
-      to: recipient,
+      to: recipients,
       subject: "Nouvelle demande de formulaire Pro Alarme",
       text: textContent,
       html: htmlContent,
