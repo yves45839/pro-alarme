@@ -972,6 +972,19 @@ export default function Home() {
       </header>
 
       <main>
+        <section className="bg-black py-12">
+          <div className="mx-auto max-w-6xl px-6">
+            <h2 className="text-2xl font-semibold text-white sm:text-3xl">
+              Pro Alarme, votre référence en alarme et anti-intrusion à Abidjan
+            </h2>
+            <p className="mt-4 max-w-4xl text-sm leading-relaxed text-neutral-200 sm:text-base">
+              Vous cherchez une solution fiable pour la protection de maison, protéger son magasin
+              ou sécuriser une entreprise avec une entreprise de surveillance locale&nbsp;?
+              Proalarme accompagne les résidences, commerces et bureaux avec des systèmes d’alarme
+              professionnels, la télésurveillance 24/7 et une intervention rapide.
+            </p>
+          </div>
+        </section>
         <section
           data-animate-on-scroll
           id="devis"

@@ -13,6 +13,12 @@ export const metadata: Metadata = {
     "Entreprise ivoirienne experte en systèmes d'alarme professionnels, télésurveillance et intervention rapide 24/7 partout à Abidjan.",
   keywords: [
     "pro alarme",
+    "proalarme",
+    "alarme",
+    "anti-intrusion",
+    "protection de maison",
+    "protéger son magasin",
+    "entreprise de surveillance",
     "système d'alarme",
     "télésurveillance Abidjan",
     "sécurité entreprise Côte d'Ivoire",
